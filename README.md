@@ -1,7 +1,9 @@
 # Help for config.json
 
 BanCount: how much times a person/bot can ban in banseconds (see below) if they reach over x limit they get banned themselves
+
 BanSeconds: if someone has banned equal to or over the BanCount (see above) in y seconds
+
 Token: (your bot token duh?)
 
 Whitelisted: Whitelisted IDs that can bypass the banning
