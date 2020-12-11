@@ -23,8 +23,8 @@ type (
 )
 
 var (
-	bans           = make(map[string]string)
 	auditLog       = make(map[string]int)
+	bans           = make(map[string]string)
 	config         = configData{}
 	whitelistedIDs = map[string]string{}
 )
