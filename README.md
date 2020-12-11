@@ -9,7 +9,7 @@ Whitelisted: Whitelisted IDs that can bypass the banning
 don't forget to make the bot role the HIGHEST it can be (even above your admins) and give it audit log perms, ban perms
 so basically just give it admin it's easier
 
-#Anti-Nuke features
+# Anti-Nuke features
 
 does very simple anti fake-bot checking (mee6,dyno)
 bans the "wizz" bot very fast (GoRaider on my github got 3 before Anti-Nuke got it)
