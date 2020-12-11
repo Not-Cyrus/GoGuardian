@@ -1,0 +1,10 @@
+{
+	"BanCount":2,
+	"BanSeconds":2,
+	"token": "Bot Token",
+	"Whitelisted":[
+		"ID",
+		"ID2",
+		"ETC"
+	]
+}
