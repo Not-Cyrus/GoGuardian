@@ -15,5 +15,5 @@ does very simple anti fake-bot checking (mee6,dyno)
 bans the "wizz" bot very fast (GoRaider on my github got 3 before Anti-Nuke got it)
 faster than higher-level languages like js,python etc
 
-#Anti-Nuke cons
+# Anti-Nuke cons
 doesn't really have multi-guild support
