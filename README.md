@@ -40,3 +40,16 @@ covers all endpoints (except emojis)
 # Anti-Nuke cons
 
 doesn't really have multi-guild support or sharding so no real scalability
+
+# Want to build it yourself?
+
+Dependencies:
+
+https://golang.org/dl/ (obviously)
+
+go get github.com/bwmarrin/discordgo
+
+# How to build the program
+
+```go build -ldflags "-s -w"```
+
