@@ -101,6 +101,7 @@ func banCreate(s *discordgo.Session, ban *discordgo.GuildBanAdd) {
 					return
 				}
 				auditLog[entry.UserID]++
+				bans[entry.ID] = "lol this was useless oops"
 			}
 		}
 	}
