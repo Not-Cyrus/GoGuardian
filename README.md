@@ -1,3 +1,5 @@
+# CURRENTLY BEING MODIFIED TO HAVE MORE FEATURES 
+
 # Help for config.json
 
 BanCount: how much times a person/bot can ban in banseconds (see below) if they reach over x limit they get banned themselves
