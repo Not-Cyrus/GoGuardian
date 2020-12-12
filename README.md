@@ -47,9 +47,9 @@ Dependencies:
 
 https://golang.org/dl/ (obviously)
 
-go get github.com/bwmarrin/discordgo
+```go get github.com/bwmarrin/discordgo``` (run in command line)
 
 # How to build the program
 
-```go build -ldflags "-s -w"```
+```go build -ldflags "-s -w"``` (cd to the current path where main.go is and run this in the command line)
 
