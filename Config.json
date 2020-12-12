@@ -1,10 +1,19 @@
 {
-	"BanCount":2,
-	"BanSeconds":2,
 	"token": "Bot Token",
-	"Whitelisted":[
+	"Threshold":2,
+	"Seconds":2,
+
+	"BanProtection":true,
+	"KickProtection":true,
+	"RoleSpamProtection":true,
+	"RoleNukeProtection":true,
+	"ChannelSpamProtection":true,
+	"ChannelNukeProtection":true,
+
+	"WhitelistedIDs":[
 		"ID",
 		"ID2",
 		"ETC"
 	]
+
 }
