@@ -17,7 +17,7 @@ func readAudits(s *discordgo.Session, guildID string, auditType int) bool {
 	}
 	for _, entry := range audits.AuditLogEntries {
 		if userMap[entry.UserID] >= config.Config.Threshold {
-			err := s.GuildBanCreateWithReason(guildID, entry.UserID, "You suck at nuking!!!", 0)
+			err := s.GuildBanCreateWithReason(guildID, entry.UserID, "You just got destroyed by https://github.com/Not-Cyrus/GoGuardian", 0)
 			if err != nil {
 				fmt.Println(fmt.Sprintf("I have no perms to ban: %s", err.Error()))
 				return false
