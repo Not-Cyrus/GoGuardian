@@ -1,6 +1,6 @@
 # GoGuardian ™️ the only way to truly protect your server against people like me
 
-# Anti-Nuke features
+# GoGuardian features
 
 bans the "wizz" bot very fast (GoRaider on my github got 3 before Anti-Nuke got it)
 
@@ -8,7 +8,7 @@ faster than higher-level languages like js,python etc
 
 covers all endpoints (except emojis) 
 
-# Anti-Nuke cons
+# GoGuardian cons
 
 doesn't really have multi-guild support or sharding so no real scalability
 
@@ -39,6 +39,10 @@ RoleNukeProtection: Keeps you safe from bots/people that mass delete roles
 ChannelSpamProtection: Keeps you safe from bots/people that mass create channels (also bans annoying admins that do it so be warned)
 
 ChannelNukeProtection: Keeps you safe from bots/people that mass delete channels
+
+MemberRoleUpdateProtection: Keeps you safe from bots/people giving administrator roles without being whitelisted
+
+AntiBotProtection: Removes all bots that get invited and bans the person who invited it
 
 # Want to build it yourself?
 
