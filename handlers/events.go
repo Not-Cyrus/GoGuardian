@@ -54,6 +54,28 @@ func KickHandler(s *discordgo.Session, channel *discordgo.GuildMemberRemove) {
 	}
 }
 
+func MemberAdded(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
+	var err error
+	if !config.Config.AntiBotEnabled || !member.User.Bot {
+		return
+	}
+	auditEntry := findAudit(s, member.GuildID, member.User.ID, 28)
+	if auditEntry == nil {
+		fmt.Println("hello")
+		return
+	}
+	if _, ok := config.WhitelistedIDs[auditEntry.UserID]; !ok {
+		return
+	}
+	err = s.GuildBanCreateWithReason(member.GuildID, member.User.ID, "Banned for being a bot that was invited by someone not whitelisted. - https://github.com/Not-Cyrus/GoGuardian", 0)
+	err = s.GuildBanCreateWithReason(member.GuildID, auditEntry.UserID, "Banned for trying to invite a bot while not whitelisted. - https://github.com/Not-Cyrus/GoGuardian", 0)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("Couldn't ban either the user/bot: %s", err.Error()))
+		return
+	}
+	fmt.Println("Someone tried to invite a bot and got banned with the bot.")
+}
+
 func MemberRoleUpdate(s *discordgo.Session, member *discordgo.GuildMemberUpdate) {
 	if !config.Config.MemberRoleUpdateEnabled {
 		return
