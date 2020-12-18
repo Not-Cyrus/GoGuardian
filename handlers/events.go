@@ -61,7 +61,6 @@ func MemberAdded(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
 	}
 	auditEntry := findAudit(s, member.GuildID, member.User.ID, 28)
 	if auditEntry == nil {
-		fmt.Println("hello")
 		return
 	}
 	if _, ok := config.WhitelistedIDs[auditEntry.UserID]; !ok {
