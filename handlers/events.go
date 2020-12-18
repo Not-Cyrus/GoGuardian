@@ -7,6 +7,13 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+func AddMember(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
+	if _, ok := config.WhitelistedIDs[member.User.ID]; !ok || !config.Config.AntiBotEnabled || !member.User.Bot {
+		return
+	}
+	s.GuildBanCreateWithReason(member.GuildID, member.User.ID, "Bot Destroyed by https://github.com/Not-Cyrus/GoGuardian", 0)
+}
+
 func BanHandler(s *discordgo.Session, ban *discordgo.GuildBanAdd) {
 	if !config.Config.BanEnabled {
 		return // Why you would EVER turn this off? Who knows.
@@ -18,7 +25,7 @@ func BanHandler(s *discordgo.Session, ban *discordgo.GuildBanAdd) {
 }
 
 func ChannelCreate(s *discordgo.Session, channel *discordgo.ChannelCreate) {
-	if len(channel.GuildID) == 0 || !config.Config.ChannelSpamEnabled {
+	if !config.Config.ChannelSpamEnabled || len(channel.GuildID) == 0 {
 		return
 	}
 	bannedAnyone := readAudits(s, channel.GuildID, 10)
@@ -28,7 +35,7 @@ func ChannelCreate(s *discordgo.Session, channel *discordgo.ChannelCreate) {
 }
 
 func ChannelRemove(s *discordgo.Session, channel *discordgo.ChannelDelete) {
-	if len(channel.GuildID) == 0 || !config.Config.ChannelNukeEnabled {
+	if !config.Config.ChannelNukeEnabled || len(channel.GuildID) == 0 {
 		return
 	}
 	bannedAnyone := readAudits(s, channel.GuildID, 12)
@@ -47,13 +54,42 @@ func KickHandler(s *discordgo.Session, channel *discordgo.GuildMemberRemove) {
 	}
 }
 
+func MemberRoleUpdate(s *discordgo.Session, member *discordgo.GuildMemberUpdate) {
+	if !config.Config.MemberRoleUpdateEnabled {
+		return
+	}
+	auditEntry := findAudit(s, member.GuildID, member.User.ID, 25)
+	if auditEntry == nil {
+		return
+	}
+	if _, ok := config.WhitelistedIDs[auditEntry.UserID]; !ok {
+		return
+	}
+	for _, change := range auditEntry.Changes {
+		roleID := change.NewValue.([]interface{})[0].(map[string]interface{})["id"].(string)
+		guildRole, err := s.State.Role(member.GuildID, roleID)
+		if err != nil {
+			fmt.Println(fmt.Sprintf("Couldn't find the role: %s", err.Error()))
+			return
+		}
+		if guildRole.Permissions&0x8 == 0x8 {
+			err = s.GuildBanCreateWithReason(member.GuildID, auditEntry.UserID, "Banned for trying to give a role admin while not whitelisted. - https://github.com/Not-Cyrus/GoGuardian", 0)
+			if err != nil {
+				fmt.Println(fmt.Sprintf("Couldn't ban the person who gave a member a role without being whitelisted: %s", err.Error()))
+				return
+			}
+			fmt.Println("Banned a user trying to give people admin roles without being whitelisted")
+		}
+	}
+}
+
 func RoleCreate(s *discordgo.Session, channel *discordgo.GuildRoleCreate) {
 	if !config.Config.RoleSpamEnabled {
 		return
 	}
 	bannedAnyone := readAudits(s, channel.GuildID, 30)
 	if bannedAnyone {
-		fmt.Println("Banned a bot/Account that was trying to mass generate channels")
+		fmt.Println("Banned a bot/Account that was trying to mass generate roles")
 	}
 }
 
@@ -64,5 +100,33 @@ func RoleRemove(s *discordgo.Session, channel *discordgo.GuildRoleDelete) {
 	bannedAnyone := readAudits(s, channel.GuildID, 32)
 	if bannedAnyone {
 		fmt.Println("Banned a bot/Account that was trying to remove all roles")
+	}
+}
+
+func RoleUpdate(s *discordgo.Session, role *discordgo.GuildRoleUpdate) {
+	var err error
+	if !config.Config.RoleUpdateEnabled {
+		return
+	}
+	auditEntry := findAudit(s, role.GuildID, role.Role.ID, 31)
+	if auditEntry == nil {
+		return
+	}
+	if _, ok := config.WhitelistedIDs[auditEntry.UserID]; !ok {
+		return
+	}
+	guildRole, err := s.State.Role(role.GuildID, role.Role.ID)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("Couldn't find the role: %s", err.Error()))
+		return
+	}
+	if guildRole.Permissions&0x8 == 0x8 {
+		err = s.GuildRoleDelete(role.GuildID, role.Role.ID)
+		err = s.GuildBanCreateWithReason(role.GuildID, auditEntry.UserID, "Banned for trying to give a role admin while not whitelisted. - https://github.com/Not-Cyrus/GoGuardian", 0)
+		if err != nil {
+			fmt.Println(fmt.Sprintf("Couldn't properly ban the user/delete the role: %s", err.Error()))
+			return
+		}
+		fmt.Println("Banned a user trying to create administrator roles without being whitelisted")
 	}
 }

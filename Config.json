@@ -2,13 +2,15 @@
 	"token": "Bot Token",
 	"Threshold":2,
 	"Seconds":2,
-
 	"BanProtection":true,
 	"KickProtection":true,
+	"AntiBotProtection":true,
 	"RoleSpamProtection":true,
 	"RoleNukeProtection":true,
+	"RoleUpdateProtection":true,
 	"ChannelSpamProtection":true,
 	"ChannelNukeProtection":true,
+	"MemberRoleUpdateProtection":true,
 
 	"WhitelistedIDs":[
 		"ID",

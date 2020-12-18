@@ -28,16 +28,19 @@ func init() {
 
 type (
 	configData struct {
-		Token              string   `json:"token"`
-		Seconds            float64  `json:"Seconds"`
-		Threshold          int      `json:"Threshold"`
-		BanEnabled         bool     `json:"BanProtection"`
-		KickEnabled        bool     `json:"KickProtection"`
-		RoleSpamEnabled    bool     `json:"RoleSpamProtection"`
-		RoleNukeEnabled    bool     `json:"RoleNukeProtection"`
-		ChannelSpamEnabled bool     `json:"ChannelSpamProtection"`
-		ChannelNukeEnabled bool     `json:"ChannelNukeProtection"`
-		WhitelistIDs       []string `json:"WhitelistedIDs,omitempty"`
+		Token                   string   `json:"token"`
+		Seconds                 float64  `json:"Seconds"`
+		Threshold               int      `json:"Threshold"`
+		BanEnabled              bool     `json:"BanProtection"`
+		KickEnabled             bool     `json:"KickProtection"`
+		AntiBotEnabled          bool     `json:"AntiBotProtection"`
+		RoleSpamEnabled         bool     `json:"RoleSpamProtection"`
+		RoleNukeEnabled         bool     `json:"RoleNukeProtection"`
+		RoleUpdateEnabled       bool     `json:"RoleUpdateProtection"`
+		ChannelSpamEnabled      bool     `json:"ChannelSpamProtection"`
+		ChannelNukeEnabled      bool     `json:"ChannelNukeProtection"`
+		WhitelistIDs            []string `json:"WhitelistedIDs,omitempty"`
+		MemberRoleUpdateEnabled bool     `json:"MemberRoleUpdateProtection"`
 	}
 )
 
