@@ -2,11 +2,13 @@
 
 # GoGuardian features
 
-bans the "wizz" bot very fast (GoRaider on my github got 3 before Anti-Nuke got it)
+Anti-hijack setting (makes GoGuardian leave the server if it has doing some not so nice things!)
+
+bans the "wizz" bot very fast
 
 faster than higher-level languages like js,python etc
 
-covers all endpoints (except emojis) 
+covers all endpoints (except emojis)
 
 # GoGuardian cons
 
@@ -43,6 +45,8 @@ ChannelNukeProtection: Keeps you safe from bots/people that mass delete channels
 MemberRoleUpdateProtection: Keeps you safe from bots/people giving administrator roles without being whitelisted
 
 AntiBotProtection: Removes all bots that get invited and bans the person who invited it
+
+HijackProtection: Makes the bot leave the guild if it tried nuking the server itself.
 
 # Want to build it yourself?
 
