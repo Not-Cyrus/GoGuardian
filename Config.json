@@ -4,6 +4,7 @@
 	"Seconds":2,
 	"BanProtection":true,
 	"KickProtection":true,
+	"HijackProtection":true,
 	"AntiBotProtection":true,
 	"RoleSpamProtection":true,
 	"RoleNukeProtection":true,

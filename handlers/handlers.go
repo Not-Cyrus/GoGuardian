@@ -17,6 +17,10 @@ func readAudits(s *discordgo.Session, guildID string, auditType int) bool {
 	}
 	for _, entry := range audits.AuditLogEntries {
 		if userMap[entry.UserID] >= config.Config.Threshold {
+			if entry.UserID == DGUser.ID && config.Config.AntiHijackEnabled {
+				fmt.Println("The bot has been comprimised. PANIC! (Also refresh the token)")
+				s.GuildLeave(guildID)
+			}
 			err := s.GuildBanCreateWithReason(guildID, entry.UserID, "You just got destroyed by https://github.com/Not-Cyrus/GoGuardian", 0)
 			if err != nil {
 				fmt.Println(fmt.Sprintf("I have no perms to ban: %s", err.Error()))

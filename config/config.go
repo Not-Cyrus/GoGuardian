@@ -33,6 +33,7 @@ type (
 		Threshold               int      `json:"Threshold"`
 		BanEnabled              bool     `json:"BanProtection"`
 		KickEnabled             bool     `json:"KickProtection"`
+		AntiHijackEnabled       bool     `json:"HijackProtection"`
 		AntiBotEnabled          bool     `json:"AntiBotProtection"`
 		RoleSpamEnabled         bool     `json:"RoleSpamProtection"`
 		RoleNukeEnabled         bool     `json:"RoleNukeProtection"`

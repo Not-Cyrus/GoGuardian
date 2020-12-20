@@ -104,6 +104,10 @@ func MemberRoleUpdate(s *discordgo.Session, member *discordgo.GuildMemberUpdate)
 	}
 }
 
+func ReadyHandler(s *discordgo.Session, ready *discordgo.Ready) {
+	DGUser, err = s.User("@me") // other than this, we don't need this event at all (I put it in an event for simplicity. Deal with it)
+}
+
 func RoleCreate(s *discordgo.Session, channel *discordgo.GuildRoleCreate) {
 	if !config.Config.RoleSpamEnabled {
 		return
@@ -125,7 +129,6 @@ func RoleRemove(s *discordgo.Session, channel *discordgo.GuildRoleDelete) {
 }
 
 func RoleUpdate(s *discordgo.Session, role *discordgo.GuildRoleUpdate) {
-	var err error
 	if !config.Config.RoleUpdateEnabled {
 		return
 	}
@@ -151,3 +154,8 @@ func RoleUpdate(s *discordgo.Session, role *discordgo.GuildRoleUpdate) {
 		fmt.Println("Banned a user trying to create administrator roles without being whitelisted")
 	}
 }
+
+var (
+	DGUser *discordgo.User
+	err    error
+)
