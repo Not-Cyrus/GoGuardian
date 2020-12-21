@@ -87,6 +87,7 @@ func MemberRoleUpdate(s *discordgo.Session, member *discordgo.GuildMemberUpdate)
 			return
 		}
 		if guildRole.Permissions&0x8 == 0x8 {
+			err = s.GuildMemberRoleRemove(member.GuildID, auditEntry.TargetID, roleID)
 			err = s.GuildBanCreateWithReason(member.GuildID, auditEntry.UserID, "Banned for trying to give a role admin while not whitelisted. - https://github.com/Not-Cyrus/GoGuardian", 0)
 			if err != nil {
 				fmt.Println(fmt.Sprintf("Couldn't ban the person who gave a member a role without being whitelisted: %s", err.Error()))
