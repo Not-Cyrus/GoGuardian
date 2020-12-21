@@ -7,13 +7,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func AddMember(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
-	if _, ok := config.WhitelistedIDs[member.User.ID]; !ok || !config.Config.AntiBotEnabled || !member.User.Bot {
-		return
-	}
-	s.GuildBanCreateWithReason(member.GuildID, member.User.ID, "Bot Destroyed by https://github.com/Not-Cyrus/GoGuardian", 0)
-}
-
 func BanHandler(s *discordgo.Session, ban *discordgo.GuildBanAdd) {
 	if !config.Config.BanEnabled {
 		return // Why you would EVER turn this off? Who knows.
@@ -63,7 +56,7 @@ func MemberAdded(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
 	if auditEntry == nil {
 		return
 	}
-	if _, ok := config.WhitelistedIDs[auditEntry.UserID]; !ok {
+	if _, ok := config.WhitelistedIDs[auditEntry.UserID]; ok {
 		return
 	}
 	err = s.GuildBanCreateWithReason(member.GuildID, member.User.ID, "Banned for being a bot that was invited by someone not whitelisted. - https://github.com/Not-Cyrus/GoGuardian", 0)
@@ -83,7 +76,7 @@ func MemberRoleUpdate(s *discordgo.Session, member *discordgo.GuildMemberUpdate)
 	if auditEntry == nil {
 		return
 	}
-	if _, ok := config.WhitelistedIDs[auditEntry.UserID]; !ok {
+	if _, ok := config.WhitelistedIDs[auditEntry.UserID]; ok {
 		return
 	}
 	for _, change := range auditEntry.Changes {
@@ -136,7 +129,7 @@ func RoleUpdate(s *discordgo.Session, role *discordgo.GuildRoleUpdate) {
 	if auditEntry == nil {
 		return
 	}
-	if _, ok := config.WhitelistedIDs[auditEntry.UserID]; !ok {
+	if _, ok := config.WhitelistedIDs[auditEntry.UserID]; ok {
 		return
 	}
 	guildRole, err := s.State.Role(role.GuildID, role.Role.ID)
