@@ -13,7 +13,8 @@ func readAudits(s *discordgo.Session, guildID string, auditType int) bool {
 	userMap := make(map[string]int)
 	audits, err := s.GuildAuditLog(guildID, "", "", auditType, 25)
 	if err != nil {
-		panic("I can't read audits (wtf am I supposed to do???)")
+		fmt.Printf("I can't read audits : %s\n", err.Error())
+		return false
 	}
 	for _, entry := range audits.AuditLogEntries {
 		if userMap[entry.UserID] >= config.Config.Threshold {
@@ -50,6 +51,7 @@ func findAudit(s *discordgo.Session, guildID, targetID string, auditType int) *d
 	audits, err := s.GuildAuditLog(guildID, "", "", auditType, 10) // we really don't need 25 here so we'll use 10 instead (I could probably just use one but whatever)
 	if err != nil {
 		fmt.Printf("I can't read audits: %s\n", err.Error())
+		return nil
 	}
 	for _, entry := range audits.AuditLogEntries {
 		if entry.TargetID == targetID {
