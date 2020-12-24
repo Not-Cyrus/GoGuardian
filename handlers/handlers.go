@@ -49,7 +49,7 @@ func readAudits(s *discordgo.Session, guildID string, auditType int) bool {
 func findAudit(s *discordgo.Session, guildID, targetID string, auditType int) *discordgo.AuditLogEntry {
 	audits, err := s.GuildAuditLog(guildID, "", "", auditType, 10) // we really don't need 25 here so we'll use 10 instead (I could probably just use one but whatever)
 	if err != nil {
-		panic("I can't read audits (wtf am I supposed to do???)")
+		fmt.Printf("I can't read audits: %s\n", err.Error())
 	}
 	for _, entry := range audits.AuditLogEntries {
 		if entry.TargetID == targetID {
