@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -39,4 +40,25 @@ func InArray(arrayStr string, data *fastjson.Value, m *discordgo.Message, target
 		}
 	}
 	return false, 0
+}
+
+func GetGuildOwner(s *discordgo.Session, guildID string) string {
+	guild, err := s.Guild(guildID)
+	if err != nil {
+		fmt.Printf("Error getting guild: %s\n", err)
+		return ""
+	}
+	return guild.OwnerID
+}
+
+func SendMessage(s *discordgo.Session, message, userID string) {
+	if len(userID) != 0 {
+		channel, err := s.UserChannelCreate(userID)
+		if err != nil {
+			fmt.Printf("Couldn't make a channel on that UserID: %s\n", err.Error())
+			return
+		}
+		s.ChannelMessageSend(channel.ID, message)
+	}
+	fmt.Printf("[GoGuardian]: %s\n", message)
 }

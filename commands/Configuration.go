@@ -13,7 +13,7 @@ import (
 func (cmd *Commands) Config(s *discordgo.Session, message *discordgo.Message, ctx *Context) {
 	parsedData, err := parser.Parse(utils.ReadFile("config.json"))
 	if err != nil {
-		fmt.Printf("Couldn't parse json data: %s\n", err.Error())
+		utils.SendMessage(s, fmt.Sprintf("Couldn't parse json data: %s\n", err.Error()), "")
 		return
 	}
 	object, err := parsedData.Object()
@@ -25,6 +25,7 @@ func (cmd *Commands) Config(s *discordgo.Session, message *discordgo.Message, ct
 		s.ChannelMessageSend(message.ChannelID, "Not a valid argument.")
 		return
 	}
+	s.ChannelMessageSend(message.ChannelID, fmt.Sprintf("%s has been set to %s", parseStr, strconv.FormatBool(!parsedData.GetBool(parseStr))))
 	object.Set(parseStr, fastjson.MustParse(strconv.FormatBool(!parsedData.GetBool(parseStr))))
 	utils.Writefile("config.json", string(object.MarshalTo(nil)))
 }
@@ -36,7 +37,7 @@ func (cmd *Commands) AddWhitelist(s *discordgo.Session, message *discordgo.Messa
 	}
 	parsedData, err := parser.Parse(utils.ReadFile("config.json"))
 	if err != nil {
-		fmt.Printf("Couldn't parse json data: %s\n", err.Error())
+		utils.SendMessage(s, fmt.Sprintf("Couldn't parse json data: %s\n", err.Error()), "")
 		return
 	}
 	inArray, _ := utils.InArray("WhitelistedIDs", parsedData, message, message.Mentions[0].ID)
@@ -56,7 +57,7 @@ func (cmd *Commands) RemoveWhitelist(s *discordgo.Session, message *discordgo.Me
 	}
 	parsedData, err := parser.Parse(utils.ReadFile("config.json"))
 	if err != nil {
-		fmt.Printf("Couldn't parse json data: %s\n", err.Error())
+		utils.SendMessage(s, fmt.Sprintf("Couldn't parse json data: %s\n", err.Error()), "")
 		return
 	}
 	inArray, index := utils.InArray("WhitelistedIDs", parsedData, message, message.Mentions[0].ID)
