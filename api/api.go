@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/Not-Cyrus/GoGuardian/commands"
 	"github.com/Not-Cyrus/GoGuardian/config"
 	"github.com/Not-Cyrus/GoGuardian/handlers"
 	"github.com/bwmarrin/discordgo"
@@ -20,6 +21,10 @@ func (b *Bot) Setup() {
 	for _, handler := range handlerNames {
 		b.DS.AddHandler(handler)
 	}
+	b.DS.AddHandler(route.MessageCreate)
+	route.Add("config", route.Config)
+	route.Add("whitelist", route.AddWhitelist)
+	route.Add("unwhitelist", route.RemoveWhitelist)
 }
 
 func (b *Bot) Run() error {
@@ -42,5 +47,6 @@ type (
 )
 
 var (
-	err error
+	err   error
+	route = commands.New()
 )
