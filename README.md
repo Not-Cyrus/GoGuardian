@@ -17,9 +17,13 @@ doesn't really have multi-guild support or sharding so no real scalability
 # General help
 
 don't forget to make the bot role the HIGHEST it can be (even above your admins) and give it audit log perms, ban perms
+
 so basically just give it admin it's easier
+
 put your token in the config.json file where it says "Bot Token"
+
 to use chat commands firstly put your user id `WhitelistedIDs":["here"]` in the config.json file
+
 to change the threshold/timeout (amount (threshold) of times they can break a protection setting in x amount of seconds)
 
 
