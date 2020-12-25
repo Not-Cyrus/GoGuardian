@@ -18,35 +18,40 @@ doesn't really have multi-guild support or sharding so no real scalability
 
 don't forget to make the bot role the HIGHEST it can be (even above your admins) and give it audit log perms, ban perms
 so basically just give it admin it's easier
+put your token in the config.json file where it says "Bot Token"
+to use chat commands firstly put your user id `WhitelistedIDs":["here"]` in the config.json file
+to change the threshold/timeout (amount (threshold) of times they can break a protection setting in x amount of seconds)
 
 
-# Help for config.json
+# Command help:
 
-Threshold: how much times a person/bot can do a certain action in x seconds (see below) if they reach over x limit they get banned themselves
+Prefix: g | layout: gcommand
 
-Seconds: if someone has banned equal to or over the Threshold (see above) in x seconds
+Commands: 
 
-token: (your bot token duh?)
+config antiadminrole - blocks people/bots from making roles have Administator permissions
 
-WhitelistedIDs: Whitelisted IDs that can bypass the banning
+config antiban - blocks wizz/nuke/destroyer bots from banning everyone
 
-BanProtection: Keeps you safe from bots/people that mass ban
+config antibots - bans any bot that gets invited (and the person who invited it)
 
-KickProtection: Keeps you safe from bots/people that mass kick
+config antichannelspam - stops people/bots from spam creating channels (mainly bots)
 
-RoleSpamProtection: Keeps you safe from bots/people that mass create roles (also bans annoying admins that do it so be warned)
+config antichannelnuke - stops people/bots from deleting lots of channels (mainly bots)
 
-RoleNukeProtection: Keeps you safe from bots/people that mass delete roles
+config antihijack - if GoGuardian ever gets comprimised and starts "nuking" the server it will leave.
 
-ChannelSpamProtection: Keeps you safe from bots/people that mass create channels (also bans annoying admins that do it so be warned)
+config antikick - blocks wizz/nuke/destroyer bots from kicking everyone
 
-ChannelNukeProtection: Keeps you safe from bots/people that mass delete channels
+config antimemberadmin - blocks people/bots from giving a member a role that has Administator permissions
 
-MemberRoleUpdateProtection: Keeps you safe from bots/people giving administrator roles without being whitelisted
+config antirolespam - stops people/bots from spamm creating roles (mainly bots)
 
-AntiBotProtection: Removes all bots that get invited and bans the person who invited it
+config antirolenuke - stops people/bots from deleting lots of roles (mainly bots)
 
-HijackProtection: Makes the bot leave the guild if it tried nuking the server itself.
+whitelist @user - whitelists a user so that they do not get affected by any protection settings.
+
+unwhitelist @user - unwhitelists a user so that they are affected by any toggled protection settings (default for all users.)
 
 # Want to build it yourself?
 
