@@ -12,7 +12,9 @@ covers all endpoints (except emojis)
 
 # GoGuardian cons
 
-doesn't really have multi-guild support or sharding so no real scalability
+that it uses JSON for a database (not really much of an issue unless you have like 10000 guilds or something)
+
+there is no way to currently change threshold/seconds outside of config.json file (will probably be in by like tomorrow)
 
 # General help
 
@@ -20,11 +22,9 @@ don't forget to make the bot role the HIGHEST it can be (even above your admins)
 
 so basically just give it admin it's easier
 
-put your token in the config.json file where it says "Bot Token"
+you can either put your token in Configs.json (to save it) or enter it when it asks (wont save)
 
-to use chat commands firstly put your user id `WhitelistedIDs":["here"]` in the config.json file
-
-to change the threshold/timeout (amount (threshold) of times they can break a protection setting in x amount of seconds)
+Ask the server owner to whitelist you (gwhitelist @user) *if you are the server owner you do not have to whitelist yourself but you can*
 
 
 # Command help:
