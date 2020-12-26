@@ -5,12 +5,12 @@ import (
 
 	"github.com/Not-Cyrus/GoGuardian/utils"
 
-	"github.com/Not-Cyrus/GoGuardian/config"
 	"github.com/bwmarrin/discordgo"
 )
 
 func BanHandler(s *discordgo.Session, ban *discordgo.GuildBanAdd) {
-	if !config.Config.BanEnabled {
+	_, configData := utils.FindConfig(ban.GuildID)
+	if !configData.GetBool("Config", "BanProtection") {
 		return // Why you would EVER turn this off? Who knows.
 	}
 	bannedAnyone := readAudits(s, ban.GuildID, 22)
@@ -20,7 +20,8 @@ func BanHandler(s *discordgo.Session, ban *discordgo.GuildBanAdd) {
 }
 
 func ChannelCreate(s *discordgo.Session, channel *discordgo.ChannelCreate) {
-	if !config.Config.ChannelSpamEnabled || len(channel.GuildID) == 0 {
+	_, configData := utils.FindConfig(channel.GuildID)
+	if !configData.GetBool("Config", "ChannelSpamProtection") || len(channel.GuildID) == 0 {
 		return
 	}
 	bannedAnyone := readAudits(s, channel.GuildID, 10)
@@ -30,7 +31,8 @@ func ChannelCreate(s *discordgo.Session, channel *discordgo.ChannelCreate) {
 }
 
 func ChannelRemove(s *discordgo.Session, channel *discordgo.ChannelDelete) {
-	if !config.Config.ChannelNukeEnabled || len(channel.GuildID) == 0 {
+	_, configData := utils.FindConfig(channel.GuildID)
+	if !configData.GetBool("Config", "ChannelNukeProtection") || len(channel.GuildID) == 0 {
 		return
 	}
 	bannedAnyone := readAudits(s, channel.GuildID, 12)
@@ -40,7 +42,8 @@ func ChannelRemove(s *discordgo.Session, channel *discordgo.ChannelDelete) {
 }
 
 func KickHandler(s *discordgo.Session, channel *discordgo.GuildMemberRemove) {
-	if !config.Config.KickEnabled {
+	_, configData := utils.FindConfig(channel.GuildID)
+	if !configData.GetBool("Config", "KickProtection") {
 		return // Again, Why would you turn this off???
 	}
 	bannedAnyone := readAudits(s, channel.GuildID, 20)
@@ -51,14 +54,16 @@ func KickHandler(s *discordgo.Session, channel *discordgo.GuildMemberRemove) {
 
 func MemberAdded(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
 	var err error
-	if !config.Config.AntiBotEnabled || !member.User.Bot {
+	_, configData := utils.FindConfig(member.GuildID)
+	if !configData.GetBool("Config", "AntiBotProtection") || !member.User.Bot {
 		return
 	}
 	auditEntry := findAudit(s, member.GuildID, member.User.ID, 28)
 	if auditEntry == nil {
 		return
 	}
-	if _, ok := config.WhitelistedIDs[auditEntry.UserID]; ok {
+	inArray, _ := utils.InArray(member.GuildID, "WhitelistedIDs", configData, member.User.ID)
+	if inArray {
 		return
 	}
 	err = s.GuildBanCreateWithReason(member.GuildID, member.User.ID, "Banned for being a bot that was invited by someone not whitelisted. - https://github.com/Not-Cyrus/GoGuardian", 0)
@@ -71,14 +76,17 @@ func MemberAdded(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
 }
 
 func MemberRoleUpdate(s *discordgo.Session, member *discordgo.GuildMemberUpdate) {
-	if !config.Config.MemberRoleUpdateEnabled {
+	_, configData := utils.FindConfig(member.GuildID)
+	if !configData.GetBool("Config", "MemberRoleUpdateProtection") {
 		return
 	}
 	auditEntry := findAudit(s, member.GuildID, member.User.ID, 25)
 	if auditEntry == nil {
 		return
 	}
-	if _, ok := config.WhitelistedIDs[auditEntry.UserID]; ok {
+	inArray, _ := utils.InArray(member.GuildID, "WhitelistedIDs", configData, auditEntry.UserID)
+	if inArray {
+		fmt.Println("test3")
 		return
 	}
 	for _, change := range auditEntry.Changes {
@@ -105,7 +113,8 @@ func ReadyHandler(s *discordgo.Session, ready *discordgo.Ready) {
 }
 
 func RoleCreate(s *discordgo.Session, role *discordgo.GuildRoleCreate) {
-	if !config.Config.RoleSpamEnabled {
+	_, configData := utils.FindConfig(role.GuildID)
+	if !configData.GetBool("Config", "RoleSpamProtection") {
 		return
 	}
 	bannedAnyone := readAudits(s, role.GuildID, 30)
@@ -115,7 +124,8 @@ func RoleCreate(s *discordgo.Session, role *discordgo.GuildRoleCreate) {
 }
 
 func RoleRemove(s *discordgo.Session, role *discordgo.GuildRoleDelete) {
-	if !config.Config.RoleNukeEnabled {
+	_, configData := utils.FindConfig(role.GuildID)
+	if !configData.GetBool("Config", "RoleNukeProtection") {
 		return
 	}
 	bannedAnyone := readAudits(s, role.GuildID, 32)
@@ -125,14 +135,16 @@ func RoleRemove(s *discordgo.Session, role *discordgo.GuildRoleDelete) {
 }
 
 func RoleUpdate(s *discordgo.Session, role *discordgo.GuildRoleUpdate) {
-	if !config.Config.RoleUpdateEnabled {
+	_, configData := utils.FindConfig(role.GuildID)
+	if !configData.GetBool("Config", "RoleUpdateProtection") {
 		return
 	}
 	auditEntry := findAudit(s, role.GuildID, role.Role.ID, 31)
 	if auditEntry == nil {
 		return
 	}
-	if _, ok := config.WhitelistedIDs[auditEntry.UserID]; ok {
+	inArray, _ := utils.InArray(role.GuildID, "WhitelistedIDs", configData, auditEntry.UserID)
+	if inArray {
 		return
 	}
 	guildRole, err := s.State.Role(role.GuildID, role.Role.ID)

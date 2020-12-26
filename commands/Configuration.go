@@ -10,44 +10,48 @@ import (
 	"github.com/valyala/fastjson"
 )
 
-func (cmd *Commands) Config(s *discordgo.Session, message *discordgo.Message, ctx *Context) {
-	parsedData, err := parser.Parse(utils.ReadFile("config.json"))
-	if err != nil {
-		utils.SendMessage(s, fmt.Sprintf("Couldn't parse json data: %s\n", err.Error()), "")
-		return
-	}
-	object, err := parsedData.Object()
-	if err != nil {
-		panic("Couldn't make the json data an object")
-	}
-	parseStr := validArg(ctx.Fields[0])
-	if parseStr == "Failed" {
-		s.ChannelMessageSend(message.ChannelID, "Not a valid argument.")
-		return
-	}
-	s.ChannelMessageSend(message.ChannelID, fmt.Sprintf("%s has been set to %s", parseStr, strconv.FormatBool(!parsedData.GetBool(parseStr))))
-	object.Set(parseStr, fastjson.MustParse(strconv.FormatBool(!parsedData.GetBool(parseStr))))
-	utils.Writefile("config.json", string(object.MarshalTo(nil)))
-}
-
 func (cmd *Commands) AddWhitelist(s *discordgo.Session, message *discordgo.Message, ctx *Context) {
 	if len(message.Mentions) == 0 {
 		s.ChannelMessageSend(message.ChannelID, "Mention someone to whitelist them")
 		return
 	}
-	parsedData, err := parser.Parse(utils.ReadFile("config.json"))
-	if err != nil {
-		utils.SendMessage(s, fmt.Sprintf("Couldn't parse json data: %s\n", err.Error()), "")
+
+	originalData, parsedData := utils.FindConfig(message.GuildID)
+	if parsedData == nil {
+		s.ChannelMessageSend(message.ChannelID, "Something happened and this couldn't be completed.")
 		return
 	}
-	inArray, _ := utils.InArray("WhitelistedIDs", parsedData, message, message.Mentions[0].ID)
+
+	inArray, _ := utils.InArray(message.GuildID, "WhitelistedIDs", originalData, message.Mentions[0].ID)
 	if inArray {
 		s.ChannelMessageSend(message.ChannelID, "They're already whitelisted..?")
 		return
 	}
-	parsedData.Get("WhitelistedIDs").SetArrayItem(len(parsedData.GetArray("WhitelistedIDs")), fastjson.MustParse(fmt.Sprintf(`"%s"`, message.Mentions[0].ID))) // for some reason it converts it to an int..?
-	s.ChannelMessageSend(message.ChannelID, "Added their whitelist.")
-	utils.Writefile("config.json", string(parsedData.MarshalTo(nil)))
+
+	guildArray := originalData.GetArray("Guilds", message.GuildID, "WhitelistedIDs")
+
+	originalData.Get("Guilds", message.GuildID, "WhitelistedIDs").SetArrayItem(len(guildArray), fastjson.MustParse(fmt.Sprintf(`"%s"`, message.Mentions[0].ID)))
+	utils.SaveJSON(s, message, originalData, "Added their whitelist.")
+}
+
+func (cmd *Commands) Config(s *discordgo.Session, message *discordgo.Message, ctx *Context) {
+	originalData, _ := utils.FindConfig(message.GuildID)
+	object, err := originalData.Get("Guilds", message.GuildID, "Config").Object()
+	if err != nil {
+		s.ChannelMessageSend(message.ChannelID, "Couldn't make the json data an object")
+	}
+
+	parseStr := validArg(ctx.Fields[0])
+	if parseStr == "Failed" {
+		s.ChannelMessageSend(message.ChannelID, "Not a valid argument.")
+		return
+	}
+
+	boolSet := strconv.FormatBool(!object.Get(parseStr).GetBool())
+	// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA (hi)
+	object.Set(parseStr, fastjson.MustParse(boolSet))
+
+	utils.SaveJSON(s, message, originalData, fmt.Sprintf("%s has been set to %s", parseStr, boolSet))
 }
 
 func (cmd *Commands) RemoveWhitelist(s *discordgo.Session, message *discordgo.Message, ctx *Context) {
@@ -55,16 +59,16 @@ func (cmd *Commands) RemoveWhitelist(s *discordgo.Session, message *discordgo.Me
 		s.ChannelMessageSend(message.ChannelID, "Mention someone to whitelist them")
 		return
 	}
-	parsedData, err := parser.Parse(utils.ReadFile("config.json"))
-	if err != nil {
-		utils.SendMessage(s, fmt.Sprintf("Couldn't parse json data: %s\n", err.Error()), "")
+	originalData, parsedData := utils.FindConfig(message.GuildID)
+	if parsedData == nil {
+		s.ChannelMessageSend(message.ChannelID, "Something happened and this couldn't be completed.")
 		return
 	}
-	inArray, index := utils.InArray("WhitelistedIDs", parsedData, message, message.Mentions[0].ID)
+
+	inArray, index := utils.InArray(message.GuildID, "WhitelistedIDs", originalData, message.Mentions[0].ID)
 	if inArray {
-		parsedData.Get("WhitelistedIDs").Del(fmt.Sprint(index))
-		utils.Writefile("config.json", string(parsedData.MarshalTo(nil)))
-		s.ChannelMessageSend(message.ChannelID, "removed their whitelist.")
+		originalData.Get("Guilds", message.GuildID, "WhitelistedIDs").Del(fmt.Sprint(index))
+		utils.SaveJSON(s, message, originalData, "removed their whitelist.")
 		return
 	}
 	s.ChannelMessageSend(message.ChannelID, "They weren't whitelisted..?")
@@ -94,11 +98,12 @@ func validArg(arg string) string {
 	case "antirolenuke":
 		parse = "RoleNukeProtection"
 	default:
-		parse = "Failed"
+		parse = "Failed" // please help my sanity feels like I am a valve dev working on CS:GO
 	}
 	return parse
 }
 
 var (
-	parser fastjson.Parser
+	defaultConfig = `{"WhitelistedIDs": [],"Config": {"Threshold":2,"Seconds":2,"BanProtection":true,"KickProtection":true,"HijackProtection":true,"AntiBotProtection":true,"RoleSpamProtection":true,"RoleNukeProtection":true,"RoleUpdateProtection":true,"ChannelSpamProtection":true,"ChannelNukeProtection":true,"MemberRoleUpdateProtection":true}}`
+	parser        fastjson.Parser
 )

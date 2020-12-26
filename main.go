@@ -20,3 +20,5 @@ func main() {
 	<-sc
 	bot.Stop()
 }
+
+// Note to self, I should really add comments to my code more often

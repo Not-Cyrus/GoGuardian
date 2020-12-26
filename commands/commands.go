@@ -3,7 +3,7 @@ package commands
 import (
 	"strings"
 
-	"github.com/Not-Cyrus/GoGuardian/config"
+	"github.com/Not-Cyrus/GoGuardian/utils"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -66,7 +66,12 @@ func (cmds *Commands) Match(m string) (*command, []string) {
 }
 
 func (cmds *Commands) MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if _, ok := config.WhitelistedIDs[m.Author.ID]; !ok {
+	if m.Author.Bot {
+		return
+	}
+	originalData, _ := utils.FindConfig(m.GuildID)
+	inArray, _ := utils.InArray(m.GuildID, "WhitelistedIDs", originalData, m.Author.ID)
+	if !inArray && utils.GetGuildOwner(s, m.GuildID) != m.Author.ID {
 		return
 	}
 	ctx := &Context{

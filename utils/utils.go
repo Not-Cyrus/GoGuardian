@@ -9,6 +9,46 @@ import (
 	"github.com/valyala/fastjson"
 )
 
+func FindConfig(guildID string) (*fastjson.Value, *fastjson.Value) {
+	FileContents := ReadFile("Config.json")
+	parsed, err := parser.Parse(FileContents)
+	if err != nil {
+		SendMessage(nil, fmt.Sprintf("Error parsing json %s", err.Error()), "")
+		return nil, nil
+	}
+	if !fastjson.Exists([]byte(FileContents), "Guilds", guildID) {
+		parsed.Get("Guilds").Set(guildID, fastjson.MustParse(defaultConfig))
+		SaveJSON(nil, nil, parsed, "")
+	}
+	guild := parsed.Get("Guilds", guildID)
+	return parsed, guild
+}
+
+func GetGuildOwner(s *discordgo.Session, guildID string) string {
+	guild, err := s.Guild(guildID)
+	if err != nil {
+		fmt.Printf("Error getting guild: %s\n", err)
+		return ""
+	}
+	return guild.OwnerID
+}
+
+func InArray(guildID string, arrayStr string, data *fastjson.Value, target string) (bool, int) {
+	var array []*fastjson.Value
+	switch len(arrayStr) {
+	case 0:
+		array = data.GetArray("Guilds")
+	default:
+		array = data.GetArray("Guilds", guildID, arrayStr)
+	}
+	for index, whitelistedUser := range array {
+		if string(whitelistedUser.GetStringBytes()) == target {
+			return true, index
+		}
+	}
+	return false, 0
+}
+
 func ReadFile(fileName string) string {
 	file, err := os.Open(fileName)
 	if err != nil {
@@ -23,32 +63,11 @@ func ReadFile(fileName string) string {
 	return string(data)
 }
 
-func Writefile(filename string, data string) {
-	file, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
-	defer file.Close()
-	_, err = file.WriteAt([]byte(data), 0)
-	if err != nil {
-		panic("Couldn't open/write to the file")
+func SaveJSON(s *discordgo.Session, message *discordgo.Message, parsedData *fastjson.Value, sendMessage string) {
+	if s != nil {
+		s.ChannelMessageSend(message.ChannelID, sendMessage)
 	}
-}
-
-func InArray(arrayStr string, data *fastjson.Value, m *discordgo.Message, target string) (bool, int) {
-	array := data.GetArray(arrayStr)
-	for index, whitelistedUser := range array {
-		if string(whitelistedUser.GetStringBytes()) == target {
-			return true, index
-		}
-	}
-	return false, 0
-}
-
-func GetGuildOwner(s *discordgo.Session, guildID string) string {
-	guild, err := s.Guild(guildID)
-	if err != nil {
-		fmt.Printf("Error getting guild: %s\n", err)
-		return ""
-	}
-	return guild.OwnerID
+	Writefile("config.json", string(parsedData.MarshalTo(nil)))
 }
 
 func SendMessage(s *discordgo.Session, message, userID string) {
@@ -62,3 +81,17 @@ func SendMessage(s *discordgo.Session, message, userID string) {
 	}
 	fmt.Printf("[GoGuardian]: %s\n", message)
 }
+
+func Writefile(filename string, data string) {
+	file, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	defer file.Close()
+	_, err = file.WriteAt([]byte(data), 0)
+	if err != nil {
+		panic("Couldn't open/write to the file")
+	}
+}
+
+var (
+	defaultConfig = `{"WhitelistedIDs": [],"Config": {"Threshold":2,"Seconds":2,"BanProtection":true,"KickProtection":true,"HijackProtection":true,"AntiBotProtection":true,"RoleSpamProtection":true,"RoleNukeProtection":true,"RoleUpdateProtection":true,"ChannelSpamProtection":true,"ChannelNukeProtection":true,"MemberRoleUpdateProtection":true}}`
+	parser        fastjson.Parser
+)

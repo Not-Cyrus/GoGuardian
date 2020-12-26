@@ -6,11 +6,12 @@ import (
 
 	"github.com/Not-Cyrus/GoGuardian/utils"
 
-	"github.com/Not-Cyrus/GoGuardian/config"
 	"github.com/bwmarrin/discordgo"
 )
 
 func readAudits(s *discordgo.Session, guildID string, auditType int) string {
+	_, configData := utils.FindConfig(guildID)
+
 	auditMap := make(map[string]string)
 	userMap := make(map[string]int)
 	audits, err := s.GuildAuditLog(guildID, "", "", auditType, 25)
@@ -19,9 +20,9 @@ func readAudits(s *discordgo.Session, guildID string, auditType int) string {
 		return ""
 	}
 	for _, entry := range audits.AuditLogEntries {
-		if userMap[entry.UserID] >= config.Config.Threshold {
-			if entry.UserID == DGUser.ID && config.Config.AntiHijackEnabled {
-				utils.SendMessage(s, "The bot has been comprimised. PANIC! (Also refresh the token)", utils.GetGuildOwner(s, guildID)) // this is an important message so we'll DM the owner.
+		if userMap[entry.UserID] >= configData.GetInt("Config", "Threshold") {
+			if entry.UserID == DGUser.ID && configData.GetBool("Config", "AntiHijackEnabled") {
+				utils.SendMessage(s, "The bot has been comprimised. I have left the guild for your safety.", utils.GetGuildOwner(s, guildID)) // this is an important message so we'll DM the owner.
 				s.GuildLeave(guildID)
 			}
 			err := s.GuildBanCreateWithReason(guildID, entry.UserID, "You just got destroyed by https://github.com/Not-Cyrus/GoGuardian", 0)
@@ -37,9 +38,10 @@ func readAudits(s *discordgo.Session, guildID string, auditType int) string {
 			utils.SendMessage(s, fmt.Sprintf("how the fuck did this happen: %s", err.Error()), "")
 			return ""
 		}
-		if current.Sub(entryTime).Round(1*time.Second).Seconds() <= config.Config.Seconds {
+		if current.Sub(entryTime).Round(1*time.Second).Seconds() <= configData.GetFloat64("Config", "Seconds") {
 			if _, ok := auditMap[entry.ID]; !ok {
-				if _, whitelisted := config.WhitelistedIDs[entry.UserID]; !whitelisted {
+				inArray, _ := utils.InArray(guildID, "WhitelistedIDs", configData, entry.UserID)
+				if !inArray {
 					auditMap[entry.ID] = entry.ID
 					userMap[entry.UserID]++
 				}
