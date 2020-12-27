@@ -20,7 +20,7 @@ don't forget to make the bot role the HIGHEST it can be (even above your admins)
 
 so basically just give it admin it's easier
 
-you can either put your token in Configs.json (to save it) or enter it when it asks (wont save)
+you can either put your token in Config.json (to save it) or enter it when it asks (wont save)
 
 Ask the server owner to whitelist you (gwhitelist @user) *if you are the server owner you do not have to whitelist yourself but you can*
 
