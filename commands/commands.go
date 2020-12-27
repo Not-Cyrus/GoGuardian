@@ -16,8 +16,13 @@ type Commands struct {
 }
 
 type command struct {
-	Name string
-	Run  handler
+	Prefix            string
+	Name              string
+	Help              string
+	AdvancedHelp      []string
+	RequiresArgs      bool
+	RequiresWhitelist bool
+	Run               handler
 }
 
 type Context struct {
@@ -32,10 +37,15 @@ func New() *Commands {
 	return c
 }
 
-func (cmds *Commands) Add(name string, fnc handler) *command {
+func (cmds *Commands) Add(name, helpInfo string, advancedHelp []string, fnc handler, requiresWhitelist, requiresArgs bool) *command {
 	cmd := command{}
-	cmd.Name = prefix + name
+	cmd.Prefix = prefix
+	cmd.Name = name
+	cmd.Help = helpInfo
+	cmd.AdvancedHelp = advancedHelp
 	cmd.Run = fnc
+	cmd.RequiresWhitelist = requiresWhitelist
+	cmd.RequiresArgs = requiresArgs
 	cmds.Commands = append(cmds.Commands, &cmd)
 	return &cmd
 }
@@ -51,10 +61,10 @@ func (cmds *Commands) Match(m string) (*command, []string) {
 
 	for commandKey, commandName := range content {
 		for _, commandValue := range cmds.Commands {
-			if commandValue.Name == commandName {
+			if commandValue.Prefix+commandValue.Name == commandName {
 				return commandValue, content[commandKey:]
 			}
-			if strings.HasPrefix(commandValue.Name, commandName) {
+			if strings.HasPrefix(commandValue.Prefix+commandValue.Name, commandName) {
 				if len(commandName) > rank {
 					c = commandValue
 					rank = len(commandName)
@@ -71,9 +81,7 @@ func (cmds *Commands) MessageCreate(s *discordgo.Session, m *discordgo.MessageCr
 	}
 	originalData, _ := utils.FindConfig(m.GuildID)
 	inArray, _ := utils.InArray(m.GuildID, "WhitelistedIDs", originalData, m.Author.ID)
-	if !inArray && utils.GetGuildOwner(s, m.GuildID) != m.Author.ID {
-		return
-	}
+
 	ctx := &Context{
 		Content: strings.TrimSpace(m.Content),
 	}
@@ -81,7 +89,10 @@ func (cmds *Commands) MessageCreate(s *discordgo.Session, m *discordgo.MessageCr
 	if cmd != nil {
 		ctx.Fields = fields[1:]
 		switch {
-		case len(ctx.Fields) == 0:
+		case cmd.RequiresWhitelist && !inArray && utils.GetGuildOwner(s, m.GuildID) != m.Author.ID:
+			s.ChannelMessageSend(m.ChannelID, "You need to be whitelisted to use this command. To get whitelisted ask the server owner to whitelist you. If you do not know how, type ghelp whitelist")
+			return
+		case len(ctx.Fields) == 0 && cmd.RequiresArgs:
 			s.ChannelMessageSend(m.ChannelID, "You need to have proper arguments.")
 			return
 		case len(m.GuildID) == 0:

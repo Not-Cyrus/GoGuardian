@@ -36,9 +36,17 @@ func (b *Bot) Setup() {
 	}
 
 	b.DS.AddHandler(route.MessageCreate)
-	route.Add("config", route.Config)
-	route.Add("whitelist", route.AddWhitelist)
-	route.Add("unwhitelist", route.RemoveWhitelist)
+
+	// yeah lets just hide the sheer UGLINESS of this V on one line and forget about it ok? thanks
+	route.Add("config", "- Turns on/off a protection setting that you specify. (type help config for more info)", []string{"antiadminrole - blocks people/bots from making roles have Administator permissions", "antiban - blocks wizz/nuke/destroyer bots from banning everyone", "antibots - bans any bot that gets invited (and the person who invited it)", "antichannelspam - stops people/bots from spam creating channels (mainly bots)", "antichannelnuke - stops people/bots from deleting lots of channels (mainly bots)", "antihijack - if GoGuardian ever gets comprimised and starts \"nuking\" the server it will leave.", "antikick - blocks wizz/nuke/destroyer bots from kicking everyone", "antimemberadmin - blocks people/bots from giving a member a role that has Administator permissions", "antirolespam - stops people/bots from spamm creating roles (mainly bots)", "antirolenuke - stops people/bots from deleting lots of roles (mainly bots)"}, route.Config, true, true)
+
+	route.Add("help", "Literally just help info what else do you expect a cookie?", []string{"WOW, You got a cookie!"}, route.Help, false, false)
+
+	route.Add("invite", "Gives you an invite link to invite GoGuardian to your server.", []string{"ANOTHER COOKIE!!! (I'm running out of ideas for what to put here)"}, route.Invite, false, false)
+
+	route.Add("whitelist", "whitelists a user so that they do not get affected by any protection settings.", []string{"whitelist @user"}, route.AddWhitelist, true, true)
+
+	route.Add("unwhitelist", "unwhitelists a user so that they are affected by any toggled protection settings (default for all users minus the Guild owner.)", []string{"unwhitelist @user"}, route.RemoveWhitelist, true, true)
 }
 
 func (b *Bot) Run() error {
