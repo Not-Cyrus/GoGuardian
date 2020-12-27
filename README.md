@@ -2,7 +2,7 @@
 
 # GoGuardian features
 
-Anti-hijack setting (makes GoGuardian leave the server if it has doing some not so nice things!)
+Anti-hijack setting (makes GoGuardian leave the server if it has been doing some not so nice things!)
 
 bans the "wizz" bot very fast
 
