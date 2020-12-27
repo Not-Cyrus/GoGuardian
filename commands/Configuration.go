@@ -47,11 +47,32 @@ func (cmd *Commands) Config(s *discordgo.Session, message *discordgo.Message, ct
 		return
 	}
 
-	boolSet := strconv.FormatBool(!object.Get(parseStr).GetBool())
-	// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA (hi)
-	object.Set(parseStr, fastjson.MustParse(boolSet))
+	var coolInt string
+	if len(ctx.Fields) > 1 {
+		_, err := strconv.Atoi(ctx.Fields[1])
+		if err != nil {
+			s.ChannelMessageSend(message.ChannelID, "You sure that's a number?")
+			return
+		}
+		coolInt = ctx.Fields[1]
+	}
 
-	utils.SaveJSON(s, message, originalData, fmt.Sprintf("%s has been set to %s", parseStr, boolSet))
+	switch parseStr {
+	case "Seconds":
+		object.Set(parseStr, fastjson.MustParse(coolInt))
+		utils.SaveJSON(s, message, originalData, fmt.Sprintf("%s has been set to %s", parseStr, coolInt))
+		return
+	case "Threshold":
+		object.Set(parseStr, fastjson.MustParse(coolInt)) // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA (hi)
+		utils.SaveJSON(s, message, originalData, fmt.Sprintf("%s has been set to %s", parseStr, coolInt))
+		return
+	default:
+		set := strconv.FormatBool(!object.Get(parseStr).GetBool())
+		object.Set(parseStr, fastjson.MustParse(set))
+		utils.SaveJSON(s, message, originalData, fmt.Sprintf("%s has been set to %s", parseStr, set))
+		return
+	}
+
 }
 
 func (cmd *Commands) RemoveWhitelist(s *discordgo.Session, message *discordgo.Message, ctx *Context) {
@@ -97,6 +118,10 @@ func validArg(arg string) string {
 		parse = "RoleSpamProtection"
 	case "antirolenuke":
 		parse = "RoleNukeProtection"
+	case "seconds":
+		parse = "Seconds"
+	case "threshold":
+		parse = "Threshold"
 	default:
 		parse = "Failed" // please help my sanity feels like I am a valve dev working on CS:GO
 	}
