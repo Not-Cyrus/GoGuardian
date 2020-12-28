@@ -52,13 +52,15 @@ func InArray(guildID string, arrayStr string, data *fastjson.Value, target strin
 func ReadFile(fileName string) string {
 	file, err := os.Open(fileName)
 	if err != nil {
-		panic("HELLO, DO YOU KNOW HOW TO MOVE FILES??")
+		fmt.Printf("Failed to open that file: %s", err.Error())
+		return ""
 	}
 	defer file.Close()
 
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
-		panic("I couldn't read the data")
+		fmt.Printf("I couldn't read the data: %s | Please reopen the program", err.Error())
+		return ""
 	}
 	return string(data)
 }
@@ -87,7 +89,7 @@ func Writefile(filename string, data string) {
 	defer file.Close()
 	_, err = file.WriteAt([]byte(data), 0)
 	if err != nil {
-		panic("Couldn't open/write to the file")
+		fmt.Printf("Couldn't open/write to the file: %s", err)
 	}
 }
 

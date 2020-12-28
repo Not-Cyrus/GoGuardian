@@ -2,6 +2,8 @@ package api
 
 import (
 	"fmt"
+	"os"
+	"time"
 
 	"github.com/Not-Cyrus/GoGuardian/utils"
 	"github.com/valyala/fastjson"
@@ -20,12 +22,16 @@ func (b *Bot) Setup() {
 
 	b.DS, err = discordgo.New("Bot " + token)
 	if err != nil {
-		panic("Couldn't use said token")
+		fmt.Printf("Couldn't use that token: %s", err.Error())
+		time.Sleep(5 * time.Second)
+		os.Exit(0)
 	}
 
 	b.BU, err = b.DS.User("@me")
 	if err != nil {
-		panic("Couldn't find a local user???")
+		fmt.Printf("Couldn't get a local User: %s", err.Error())
+		time.Sleep(5 * time.Second)
+		os.Exit(0)
 	}
 
 	b.DS.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuildMembers)
@@ -65,7 +71,9 @@ func getToken() string {
 	fileContents := utils.ReadFile("Config.json")
 	parsed, err := parser.Parse(fileContents)
 	if err != nil {
-		panic("Couldn't parse Config.json to get your Token")
+		fmt.Printf("Couldn't parse Config.json to get your Token: %s", err.Error())
+		time.Sleep(5 * time.Second)
+		os.Exit(0)
 	}
 	if fastjson.Exists([]byte(fileContents), "Token") {
 		return string(parsed.GetStringBytes("Token"))

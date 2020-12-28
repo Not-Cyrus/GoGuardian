@@ -41,7 +41,6 @@ func readAudits(s *discordgo.Session, guildID string, auditType int) string {
 		if current.Sub(entryTime).Round(1*time.Second).Seconds() <= configData.GetFloat64("Config", "Seconds") {
 			if _, ok := auditMap[entry.ID]; !ok {
 				inArray, _ := utils.InArray(guildID, "WhitelistedIDs", parsedData, entry.UserID)
-				fmt.Println(inArray)
 				if !inArray {
 					auditMap[entry.ID] = entry.ID
 					userMap[entry.UserID]++
