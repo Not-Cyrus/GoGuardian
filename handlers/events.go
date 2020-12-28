@@ -62,7 +62,7 @@ func MemberAdded(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
 	if auditEntry == nil {
 		return
 	}
-	inArray, _ := utils.InArray(member.GuildID, "WhitelistedIDs", configData, member.User.ID)
+	inArray, _ := utils.InArray(member.GuildID, "WhitelistedIDs", configData, auditEntry.UserID)
 	if inArray {
 		return
 	}
