@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,7 +14,7 @@ func main() {
 	bot.Setup()
 	err := bot.Run()
 	if err != nil {
-		panic("Could not start a discord session")
+		panic(fmt.Sprintf("Could not start a discord session: %s", err.Error()))
 	}
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)

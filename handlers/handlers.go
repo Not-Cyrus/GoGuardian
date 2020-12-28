@@ -10,13 +10,13 @@ import (
 )
 
 func readAudits(s *discordgo.Session, guildID string, auditType int) string {
-	_, configData := utils.FindConfig(guildID)
+	parsedData, configData := utils.FindConfig(guildID)
 
 	auditMap := make(map[string]string)
 	userMap := make(map[string]int)
 	audits, err := s.GuildAuditLog(guildID, "", "", auditType, 25)
 	if err != nil {
-		utils.SendMessage(s, fmt.Sprintf("I can't read audits : %s", err.Error()), "")
+		utils.SendMessage(s, fmt.Sprintf("I can't read audits : %s", err.Error()), utils.GetGuildOwner(s, guildID))
 		return ""
 	}
 	for _, entry := range audits.AuditLogEntries {
@@ -40,7 +40,8 @@ func readAudits(s *discordgo.Session, guildID string, auditType int) string {
 		}
 		if current.Sub(entryTime).Round(1*time.Second).Seconds() <= configData.GetFloat64("Config", "Seconds") {
 			if _, ok := auditMap[entry.ID]; !ok {
-				inArray, _ := utils.InArray(guildID, "WhitelistedIDs", configData, entry.UserID)
+				inArray, _ := utils.InArray(guildID, "WhitelistedIDs", parsedData, entry.UserID)
+				fmt.Println(inArray)
 				if !inArray {
 					auditMap[entry.ID] = entry.ID
 					userMap[entry.UserID]++
@@ -54,7 +55,7 @@ func readAudits(s *discordgo.Session, guildID string, auditType int) string {
 func findAudit(s *discordgo.Session, guildID, targetID string, auditType int) *discordgo.AuditLogEntry {
 	audits, err := s.GuildAuditLog(guildID, "", "", auditType, 10) // we really don't need 25 here so we'll use 10 instead (I could probably just use one but whatever)
 	if err != nil {
-		utils.SendMessage(s, fmt.Sprintf("I can't read audits: %s", err.Error()), "") // not TOO important as it can error if the connection drops.
+		utils.SendMessage(s, fmt.Sprintf("I can't read audits: %s | if you think this is a mistake make an issue at https://github.com/Not-Cyrus/GoGuardian/issues", err.Error()), utils.GetGuildOwner(s, guildID)) // scrap this last comment as it's now going to be a public bot.
 		return nil
 	}
 	for _, entry := range audits.AuditLogEntries {

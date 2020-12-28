@@ -76,7 +76,7 @@ func MemberAdded(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
 }
 
 func MemberRoleUpdate(s *discordgo.Session, member *discordgo.GuildMemberUpdate) {
-	_, configData := utils.FindConfig(member.GuildID)
+	parsedData, configData := utils.FindConfig(member.GuildID)
 	if !configData.GetBool("Config", "MemberRoleUpdateProtection") {
 		return
 	}
@@ -84,7 +84,7 @@ func MemberRoleUpdate(s *discordgo.Session, member *discordgo.GuildMemberUpdate)
 	if auditEntry == nil {
 		return
 	}
-	inArray, _ := utils.InArray(member.GuildID, "WhitelistedIDs", configData, auditEntry.UserID)
+	inArray, _ := utils.InArray(member.GuildID, "WhitelistedIDs", parsedData, auditEntry.UserID)
 	if inArray {
 		return
 	}
@@ -134,7 +134,7 @@ func RoleRemove(s *discordgo.Session, role *discordgo.GuildRoleDelete) {
 }
 
 func RoleUpdate(s *discordgo.Session, role *discordgo.GuildRoleUpdate) {
-	_, configData := utils.FindConfig(role.GuildID)
+	parsedData, configData := utils.FindConfig(role.GuildID)
 	if !configData.GetBool("Config", "RoleUpdateProtection") {
 		return
 	}
@@ -142,7 +142,7 @@ func RoleUpdate(s *discordgo.Session, role *discordgo.GuildRoleUpdate) {
 	if auditEntry == nil {
 		return
 	}
-	inArray, _ := utils.InArray(role.GuildID, "WhitelistedIDs", configData, auditEntry.UserID)
+	inArray, _ := utils.InArray(role.GuildID, "WhitelistedIDs", parsedData, auditEntry.UserID)
 	if inArray {
 		return
 	}

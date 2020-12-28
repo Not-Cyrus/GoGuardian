@@ -28,7 +28,7 @@ func (b *Bot) Setup() {
 		panic("Couldn't find a local user???")
 	}
 
-	b.DS.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAll)
+	b.DS.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuildMembers)
 
 	handlerNames := []interface{}{handlers.BanHandler, handlers.ChannelCreate, handlers.ChannelRemove, handlers.KickHandler, handlers.MemberAdded, handlers.ReadyHandler, handlers.MemberRoleUpdate, handlers.RoleCreate, handlers.RoleRemove, handlers.RoleUpdate}
 	for _, handler := range handlerNames {
