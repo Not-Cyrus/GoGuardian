@@ -1,10 +1,12 @@
 package commands
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/Not-Cyrus/GoGuardian/utils"
 	"github.com/bwmarrin/discordgo"
+	"github.com/valyala/fastjson"
 )
 
 var (
@@ -79,8 +81,16 @@ func (cmds *Commands) MessageCreate(s *discordgo.Session, m *discordgo.MessageCr
 	if m.Author.Bot {
 		return
 	}
+
 	originalData, _ := utils.FindConfig(m.GuildID)
 	inArray, _ := utils.InArray(m.GuildID, "WhitelistedIDs", originalData, m.Author.ID)
+
+	if !inArray && utils.GetGuildOwner(s, m.GuildID) == m.Author.ID {
+		guildArray := originalData.GetArray("Guilds", m.GuildID, "WhitelistedIDs")
+		originalData.Get("Guilds", m.GuildID, "WhitelistedIDs").SetArrayItem(len(guildArray), fastjson.MustParse(fmt.Sprintf(`"%s"`, m.Author.ID)))
+		utils.SaveJSON(nil, nil, originalData, "")
+		inArray = true
+	}
 
 	ctx := &Context{
 		Content: strings.TrimSpace(m.Content),
@@ -89,7 +99,7 @@ func (cmds *Commands) MessageCreate(s *discordgo.Session, m *discordgo.MessageCr
 	if cmd != nil {
 		ctx.Fields = fields[1:]
 		switch {
-		case cmd.RequiresWhitelist && !inArray && utils.GetGuildOwner(s, m.GuildID) != m.Author.ID:
+		case cmd.RequiresWhitelist && !inArray:
 			s.ChannelMessageSend(m.ChannelID, "You need to be whitelisted to use this command. To get whitelisted ask the server owner to whitelist you. If you do not know how, type ghelp whitelist")
 			return
 		case len(ctx.Fields) == 0 && cmd.RequiresArgs:

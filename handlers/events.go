@@ -54,7 +54,7 @@ func KickHandler(s *discordgo.Session, channel *discordgo.GuildMemberRemove) {
 
 func MemberAdded(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
 	var err error
-	_, configData := utils.FindConfig(member.GuildID)
+	parsedData, configData := utils.FindConfig(member.GuildID)
 	if !configData.GetBool("Config", "AntiBotProtection") || !member.User.Bot {
 		return
 	}
@@ -62,7 +62,7 @@ func MemberAdded(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
 	if auditEntry == nil {
 		return
 	}
-	inArray, _ := utils.InArray(member.GuildID, "WhitelistedIDs", configData, auditEntry.UserID)
+	inArray, _ := utils.InArray(member.GuildID, "WhitelistedIDs", parsedData, auditEntry.UserID)
 	if inArray {
 		return
 	}
@@ -86,7 +86,6 @@ func MemberRoleUpdate(s *discordgo.Session, member *discordgo.GuildMemberUpdate)
 	}
 	inArray, _ := utils.InArray(member.GuildID, "WhitelistedIDs", configData, auditEntry.UserID)
 	if inArray {
-		fmt.Println("test3")
 		return
 	}
 	for _, change := range auditEntry.Changes {
