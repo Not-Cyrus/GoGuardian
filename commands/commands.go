@@ -58,19 +58,12 @@ func (cmds *Commands) Match(m string) (*command, []string) {
 		return nil, nil
 	}
 	var c *command
-	var rank int
 	var commandKey int
 
 	for commandKey, commandName := range content {
 		for _, commandValue := range cmds.Commands {
 			if commandValue.Prefix+commandValue.Name == commandName {
 				return commandValue, content[commandKey:]
-			}
-			if strings.HasPrefix(commandValue.Prefix+commandValue.Name, commandName) {
-				if len(commandName) > rank {
-					c = commandValue
-					rank = len(commandName)
-				}
 			}
 		}
 	}
