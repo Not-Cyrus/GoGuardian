@@ -6,21 +6,27 @@ Anti-hijack setting (makes GoGuardian leave the server if it has been doing some
 
 bans the "wizz" bot after a certain threshold has been met in a certain amount of seconds (changed with gconfig seconds number,gconfig threshold number)
 
-faster than higher-level languages like js,python etc
 
-covers all endpoints (except emojis)
+# GoGuardian pros
+
+- completely open source
+
+- faster than higher-level languages like js,python etc
+
+- covers all endpoints (except emojis)
+
 
 # GoGuardian cons
 
-that it uses JSON for a database (not really much of an issue unless you have like 10000 guilds or something)
+- that it uses JSON for a database (not really much of an issue unless you have like 10000 guilds or something)
 
 # General help
 
-don't forget to make the bot role the HIGHEST it can be (even above your admins) and give it audit log perms, ban perms
+- don't forget to make the bot role the HIGHEST it can be (even above your admins) for the best use-case
 
-so basically just give it admin it's easier
+- remember to read each commands help info to see what permissions it needs.
 
-you can either put your token in Config.json (to save it) or enter it when it asks (wont save)
+- To toggle on/off each command just type it again.
 
 Ask the server owner to whitelist you (gwhitelist @user) *if you are the server owner you do not have to whitelist yourself but you can*
 
