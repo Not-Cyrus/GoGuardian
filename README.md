@@ -1,12 +1,5 @@
 # GoGuardian ™️ the only way to truly protect your server against people like me
 
-# GoGuardian features
-
-Anti-hijack setting (makes GoGuardian leave the server if it has been doing some not so nice things!)
-
-bans the "wizz" bot after a certain threshold has been met in a certain amount of seconds (changed with gconfig seconds number,gconfig threshold number)
-
-
 # GoGuardian pros
 
 - completely open source
