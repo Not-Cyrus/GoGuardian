@@ -23,9 +23,9 @@ func (cmd *Commands) Help(s *discordgo.Session, message *discordgo.Message, ctx 
 			)
 			for _, help := range command.AdvancedHelp {
 				embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
-					Name:   "‏",
+					Name:   "‏‍",
 					Value:  help,
-					Inline: count%2 == 0,
+					Inline: true,
 				})
 				count++
 			}
