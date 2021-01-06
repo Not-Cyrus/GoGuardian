@@ -50,6 +50,9 @@ func GuildCreate(s *discordgo.Session, guild *discordgo.GuildCreate) {
 	}
 
 	auditEntry := findAudit(s, guild.ID, DGUser.ID, 28)
+	if auditEntry == nil {
+		return
+	}
 	inArray, _ := utils.InArray(guild.ID, "WhitelistedIDs", configData, auditEntry.UserID)
 
 	if !inArray {
