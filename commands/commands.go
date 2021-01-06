@@ -1,12 +1,10 @@
 package commands
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/Not-Cyrus/GoGuardian/utils"
 	"github.com/bwmarrin/discordgo"
-	"github.com/valyala/fastjson"
 )
 
 var (
@@ -77,13 +75,6 @@ func (cmds *Commands) MessageCreate(s *discordgo.Session, m *discordgo.MessageCr
 
 	originalData, _ := utils.FindConfig(m.GuildID)
 	inArray, _ := utils.InArray(m.GuildID, "WhitelistedIDs", originalData, m.Author.ID)
-
-	if !inArray && utils.GetGuildOwner(s, m.GuildID) == m.Author.ID {
-		guildArray := originalData.GetArray("Guilds", m.GuildID, "WhitelistedIDs")
-		originalData.Get("Guilds", m.GuildID, "WhitelistedIDs").SetArrayItem(len(guildArray), fastjson.MustParse(fmt.Sprintf(`"%s"`, m.Author.ID)))
-		utils.SaveJSON(nil, nil, originalData, "")
-		inArray = true
-	}
 
 	ctx := &Context{
 		Content: strings.TrimSpace(m.Content),

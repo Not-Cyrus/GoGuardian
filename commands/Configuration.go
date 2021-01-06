@@ -129,6 +129,5 @@ func validArg(arg string) string {
 }
 
 var (
-	defaultConfig = `{"WhitelistedIDs": [],"Config": {"Threshold":2,"Seconds":2,"BanProtection":true,"KickProtection":true,"HijackProtection":true,"AntiBotProtection":true,"RoleSpamProtection":true,"RoleNukeProtection":true,"RoleUpdateProtection":true,"ChannelSpamProtection":true,"ChannelNukeProtection":true,"MemberRoleUpdateProtection":true}}`
-	parser        fastjson.Parser
+	parser fastjson.Parser
 )

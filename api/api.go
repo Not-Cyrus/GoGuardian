@@ -5,12 +5,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/Not-Cyrus/GoGuardian/utils"
-	"github.com/valyala/fastjson"
-
 	"github.com/Not-Cyrus/GoGuardian/commands"
 	"github.com/Not-Cyrus/GoGuardian/handlers"
+	"github.com/Not-Cyrus/GoGuardian/utils"
+
 	"github.com/bwmarrin/discordgo"
+	"github.com/valyala/fastjson"
 )
 
 func (b *Bot) Setup() {
@@ -36,7 +36,7 @@ func (b *Bot) Setup() {
 
 	b.DS.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuildMembers)
 
-	handlerNames := []interface{}{handlers.BanHandler, handlers.ChannelCreate, handlers.ChannelRemove, handlers.KickHandler, handlers.MemberAdded, handlers.ReadyHandler, handlers.MemberRoleUpdate, handlers.RoleCreate, handlers.RoleRemove, handlers.RoleUpdate}
+	handlerNames := []interface{}{handlers.BanHandler, handlers.ChannelCreate, handlers.ChannelRemove, handlers.GuildCreate, handlers.KickHandler, handlers.MemberAdded, handlers.MemberRoleUpdate, handlers.RoleCreate, handlers.RoleRemove, handlers.RoleUpdate}
 	for _, handler := range handlerNames {
 		b.DS.AddHandler(handler)
 	}

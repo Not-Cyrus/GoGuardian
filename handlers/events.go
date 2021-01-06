@@ -6,6 +6,7 @@ import (
 	"github.com/Not-Cyrus/GoGuardian/utils"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/valyala/fastjson"
 )
 
 func BanHandler(s *discordgo.Session, ban *discordgo.GuildBanAdd) {
@@ -39,6 +40,30 @@ func ChannelRemove(s *discordgo.Session, channel *discordgo.ChannelDelete) {
 	if len(bannedAnyone) != 0 {
 		utils.SendMessage(s, fmt.Sprintf("Banned <@!%s> who was trying to remove all channels", bannedAnyone), utils.GetGuildOwner(s, channel.GuildID))
 	}
+}
+
+func GuildCreate(s *discordgo.Session, guild *discordgo.GuildCreate) {
+	DGUser, err = s.User("@me") // this apparently fires before "ready" so it'll go here I guess lol
+	originalData, configData := utils.FindConfig(guild.ID)
+	if configData == nil {
+		return
+	}
+
+	auditEntry := findAudit(s, guild.ID, DGUser.ID, 28)
+	inArray, _ := utils.InArray(guild.ID, "WhitelistedIDs", configData, auditEntry.UserID)
+
+	if !inArray {
+
+		guildArray := originalData.GetArray("Guilds", guild.ID, "WhitelistedIDs")
+		originalData.Get("Guilds", guild.ID, "WhitelistedIDs").SetArrayItem(len(guildArray), fastjson.MustParse(fmt.Sprintf(`"%s"`, auditEntry.UserID)))
+
+		if auditEntry.UserID != guild.OwnerID {
+			originalData.Get("Guilds", guild.ID, "WhitelistedIDs").SetArrayItem(len(guildArray)+1, fastjson.MustParse(fmt.Sprintf(`"%s"`, guild.OwnerID)))
+		}
+
+		utils.SaveJSON(nil, nil, originalData, "")
+	}
+
 }
 
 func KickHandler(s *discordgo.Session, channel *discordgo.GuildMemberRemove) {
@@ -105,10 +130,6 @@ func MemberRoleUpdate(s *discordgo.Session, member *discordgo.GuildMemberUpdate)
 			utils.SendMessage(s, fmt.Sprintf("Banned <@!%s> who tried to give people admin roles without being whitelisted", auditEntry.UserID), utils.GetGuildOwner(s, member.GuildID))
 		}
 	}
-}
-
-func ReadyHandler(s *discordgo.Session, ready *discordgo.Ready) {
-	DGUser, err = s.User("@me") // other than this, we don't need this event at all (I put it in an event for simplicity. Deal with it)
 }
 
 func RoleCreate(s *discordgo.Session, role *discordgo.GuildRoleCreate) {

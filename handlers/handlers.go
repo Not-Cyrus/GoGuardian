@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/Not-Cyrus/GoGuardian/utils"
@@ -22,6 +23,9 @@ func readAudits(s *discordgo.Session, guildID string, auditType int) string {
 	for _, entry := range audits.AuditLogEntries {
 		if userMap[entry.UserID] >= configData.GetInt("Config", "Threshold") {
 			if entry.UserID == DGUser.ID && configData.GetBool("Config", "AntiHijackEnabled") {
+				if strings.Contains(entry.Reason, "https://github.com/Not-Cyrus/GoGuardian") {
+					return "" // lazy as fuck, but it'll do the trick to stop false flags. I'll probably make this better soon idk
+				}
 				utils.SendMessage(s, "The bot has been comprimised. I have left the guild for your safety.", utils.GetGuildOwner(s, guildID)) // this is an important message so we'll DM the owner.
 				s.GuildLeave(guildID)
 			}
