@@ -1,5 +1,9 @@
 # GoGuardian ™️ the only way to truly protect your server against people like me
 
+# Invite Link
+
+https://discord.com/api/oauth2/authorize?client_id=775890268364210196&permissions=8&scope=bot
+
 # GoGuardian pros
 
 - completely open source
