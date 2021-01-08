@@ -10,7 +10,7 @@ https://discord.com/api/oauth2/authorize?client_id=775890268364210196&permission
 
 - faster than higher-level languages like js,python etc
 
-- covers all endpoints (except emojis)
+- covers all endpoints minus emoji-spam/emoji-deletion. (including webhook creation)
 
 
 # GoGuardian cons
