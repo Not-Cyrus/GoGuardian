@@ -53,14 +53,15 @@ func GuildCreate(s *discordgo.Session, guild *discordgo.GuildCreate) {
 	if auditEntry == nil {
 		return
 	}
-	inArray, _ := utils.InArray(guild.ID, "WhitelistedIDs", configData, auditEntry.UserID)
+	inArray, _ := utils.InArray(guild.ID, "WhitelistedIDs", originalData, auditEntry.UserID)
+	inArray2, _ := utils.InArray(guild.ID, "WhitelistedIDs", originalData, guild.OwnerID)
 
 	if !inArray {
 
 		guildArray := originalData.GetArray("Guilds", guild.ID, "WhitelistedIDs")
 		originalData.Get("Guilds", guild.ID, "WhitelistedIDs").SetArrayItem(len(guildArray), fastjson.MustParse(fmt.Sprintf(`"%s"`, auditEntry.UserID)))
 
-		if auditEntry.UserID != guild.OwnerID {
+		if auditEntry.UserID != guild.OwnerID && !inArray2 {
 			originalData.Get("Guilds", guild.ID, "WhitelistedIDs").SetArrayItem(len(guildArray)+1, fastjson.MustParse(fmt.Sprintf(`"%s"`, guild.OwnerID)))
 		}
 
