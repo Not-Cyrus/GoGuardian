@@ -186,6 +186,35 @@ func RoleUpdate(s *discordgo.Session, role *discordgo.GuildRoleUpdate) {
 	}
 }
 
+func WebhookCreate(s *discordgo.Session, webhook *discordgo.WebhooksUpdate) {
+	var err error
+	parsedData, configData := utils.FindConfig(webhook.GuildID)
+	if !configData.GetBool("Config", "WebhookProtection") {
+		return
+	}
+
+	webhooks, err := s.ChannelWebhooks(webhook.ChannelID)
+	if err != nil {
+		utils.SendMessage(s, fmt.Sprintf("Couldn't fetch the webhooks: %s", err.Error()), utils.GetGuildOwner(s, webhook.GuildID))
+		return
+	}
+
+	for _, webhook := range webhooks {
+		inArray, _ := utils.InArray(webhook.GuildID, "WhitelistedIDs", parsedData, webhook.User.ID)
+		if inArray {
+			continue
+		}
+
+		err = s.WebhookDelete(webhook.ID)
+		err = s.GuildBanCreateWithReason(webhook.GuildID, webhook.User.ID, "Banned for trying to create webhooks roles without being whitelisted. - https://github.com/Not-Cyrus/GoGuardian", 0)
+		if err != nil {
+			utils.SendMessage(s, fmt.Sprintf("Couldn't take moderation action against the webhook (or person who made): %s", err.Error()), utils.GetGuildOwner(s, webhook.GuildID))
+			return
+		}
+		utils.SendMessage(s, fmt.Sprintf("Banned <@!%s> who was trying to create webhooks roles without being whitelisted", webhook.User.ID), utils.GetGuildOwner(s, webhook.GuildID))
+	}
+}
+
 var (
 	DGUser *discordgo.User
 	err    error

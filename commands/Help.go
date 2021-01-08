@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 
 	"github.com/bwmarrin/discordgo"
@@ -23,9 +24,9 @@ func (cmd *Commands) Help(s *discordgo.Session, message *discordgo.Message, ctx 
 			)
 			for _, help := range command.AdvancedHelp {
 				embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
-					Name:   "‏‍",
-					Value:  help,
-					Inline: true,
+					Name:   nameRegex.FindStringSubmatch(help)[0], // shhh we don't talk about it
+					Value:  nameRegex.ReplaceAllString(help, ""),
+					Inline: count%2 == 0,
 				})
 				count++
 			}
@@ -77,3 +78,7 @@ func (cmd *Commands) Help(s *discordgo.Session, message *discordgo.Message, ctx 
 	s.ChannelMessageSendEmbed(message.ChannelID, embed)
 
 }
+
+var (
+	nameRegex = regexp.MustCompile(`\*\*[\w+]{1,30}\(.+\)\*\*`)
+)

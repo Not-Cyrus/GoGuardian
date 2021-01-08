@@ -118,6 +118,8 @@ func validArg(arg string) string {
 		parse = "RoleSpamProtection"
 	case "antirolenuke":
 		parse = "RoleNukeProtection"
+	case "antiwebhook":
+		parse = "WebhookProtection"
 	case "seconds":
 		parse = "Seconds"
 	case "threshold":
