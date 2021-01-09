@@ -23,9 +23,18 @@ func (cmd *Commands) Help(s *discordgo.Session, message *discordgo.Message, ctx 
 				}
 			)
 			for _, help := range command.AdvancedHelp {
+				regexString = nameRegex.FindStringSubmatch(help)
+				switch len(regexString) {
+				case 0:
+					commandName = command.Name
+					commandValue = help
+				default:
+					commandName = regexString[0]
+					commandValue = nameRegex.ReplaceAllString(help, "")
+				}
 				embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
-					Name:   nameRegex.FindStringSubmatch(help)[0], // shhh we don't talk about it
-					Value:  nameRegex.ReplaceAllString(help, ""),
+					Name:   commandName,
+					Value:  commandValue,
 					Inline: count%2 == 0,
 				})
 				count++
@@ -80,5 +89,8 @@ func (cmd *Commands) Help(s *discordgo.Session, message *discordgo.Message, ctx 
 }
 
 var (
-	nameRegex = regexp.MustCompile(`\*\*[\w+]{1,30}\(.+\)\*\*`)
+	commandName  string
+	commandValue string
+	regexString  []string
+	nameRegex    = regexp.MustCompile(`\*\*[\w+]{1,30}\(.+\)\*\*`)
 )
