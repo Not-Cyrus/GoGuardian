@@ -14,13 +14,9 @@ import (
 )
 
 func (b *Bot) Setup() {
-	token := getToken()
-	if len(token) == 0 {
-		fmt.Print("Enter your token: ")
-		fmt.Scan(&token)
-	}
+	utils.GetToken()
 
-	b.DS, err = discordgo.New("Bot " + token)
+	b.DS, err = discordgo.New("Bot " + utils.Token)
 	if err != nil {
 		fmt.Printf("Couldn't use that token: %s", err.Error())
 		time.Sleep(5 * time.Second)
@@ -67,20 +63,6 @@ func (b *Bot) Stop() {
 	b.DS.Close()
 }
 
-func getToken() string {
-	fileContents := utils.ReadFile("Config.json")
-	parsed, err := parser.Parse(fileContents)
-	if err != nil {
-		fmt.Printf("Couldn't parse Config.json to get your Token: %s", err.Error())
-		time.Sleep(5 * time.Second)
-		os.Exit(0)
-	}
-	if fastjson.Exists([]byte(fileContents), "Token") {
-		return string(parsed.GetStringBytes("Token"))
-	}
-	return ""
-}
-
 type (
 	Bot struct {
 		DS *discordgo.Session
@@ -90,7 +72,6 @@ type (
 
 var (
 	err    error
-	token  string
 	parser fastjson.Parser
 	route  = commands.New()
 )

@@ -29,9 +29,9 @@ func readAudits(s *discordgo.Session, guildID string, auditType int) string {
 				utils.SendMessage(s, "The bot has been comprimised. I have left the guild for your safety.", utils.GetGuildOwner(s, guildID)) // this is an important message so we'll DM the owner.
 				s.GuildLeave(guildID)
 			}
-			err := s.GuildBanCreateWithReason(guildID, entry.UserID, "You just got destroyed by https://github.com/Not-Cyrus/GoGuardian", 0)
-			if err != nil {
-				utils.SendMessage(s, fmt.Sprintf("I have no perms to ban <@!%s>: %s", entry.UserID, err.Error()), utils.GetGuildOwner(s, guildID)) // this is an important message so we'll DM the owner.
+			err := utils.BanCreate(guildID, entry.UserID, "You just got destroyed by https://github.com/Not-Cyrus/GoGuardian")
+			if len(err) != 0 {
+				utils.SendMessage(s, fmt.Sprintf("I have no perms to ban <@!%s>: %s", entry.UserID, err), utils.GetGuildOwner(s, guildID)) // this is an important message so we'll DM the owner.
 				return ""
 			}
 			return entry.UserID

@@ -82,7 +82,7 @@ func KickHandler(s *discordgo.Session, channel *discordgo.GuildMemberRemove) {
 }
 
 func MemberAdded(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
-	var err error
+	var err string
 	parsedData, configData := utils.FindConfig(member.GuildID)
 	if !configData.GetBool("Config", "AntiBotProtection") || !member.User.Bot {
 		return
@@ -95,10 +95,10 @@ func MemberAdded(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
 	if inArray {
 		return
 	}
-	err = s.GuildBanCreateWithReason(member.GuildID, member.User.ID, "Banned for being a bot that was invited by someone not whitelisted. - https://github.com/Not-Cyrus/GoGuardian", 0)
-	err = s.GuildBanCreateWithReason(member.GuildID, auditEntry.UserID, "Banned for trying to invite a bot while not whitelisted. - https://github.com/Not-Cyrus/GoGuardian", 0)
-	if err != nil {
-		utils.SendMessage(s, fmt.Sprintf("Couldn't ban <@!%s> or <@!%s> (Bot Check): %s", member.User.ID, auditEntry.UserID, err.Error()), utils.GetGuildOwner(s, member.GuildID))
+	err = utils.BanCreate(member.GuildID, member.User.ID, "Banned for being a bot that was invited by someone not whitelisted. - https://github.com/Not-Cyrus/GoGuardian")
+	err = utils.BanCreate(member.GuildID, auditEntry.UserID, "Banned for trying to invite a bot while not whitelisted. - https://github.com/Not-Cyrus/GoGuardian")
+	if len(err) != 0 {
+		utils.SendMessage(s, fmt.Sprintf("Couldn't ban <@!%s> or <@!%s> (Bot Check): %s", member.User.ID, auditEntry.UserID, err), utils.GetGuildOwner(s, member.GuildID))
 		return
 	}
 	utils.SendMessage(s, fmt.Sprintf("<@!%s> tried to invite <@!%s> (A bot) and got banned.", auditEntry.UserID, member.User.ID), utils.GetGuildOwner(s, member.GuildID))
@@ -126,9 +126,9 @@ func MemberRoleUpdate(s *discordgo.Session, member *discordgo.GuildMemberUpdate)
 		}
 		if guildRole.Permissions&0x8 == 0x8 {
 			err = s.GuildMemberRoleRemove(member.GuildID, auditEntry.TargetID, roleID)
-			err = s.GuildBanCreateWithReason(member.GuildID, auditEntry.UserID, "Banned for trying to give a role admin while not whitelisted. - https://github.com/Not-Cyrus/GoGuardian", 0)
-			if err != nil {
-				utils.SendMessage(s, fmt.Sprintf("Couldn't ban <@!%s> (Member Admin Role check): %s", member.User.ID, err.Error()), utils.GetGuildOwner(s, member.GuildID))
+			err := utils.BanCreate(member.GuildID, auditEntry.UserID, "Banned for trying to give a role admin while not whitelisted. - https://github.com/Not-Cyrus/GoGuardian")
+			if len(err) != 0 {
+				utils.SendMessage(s, fmt.Sprintf("Couldn't ban <@!%s> (Member Admin Role check): %s", member.User.ID, err), utils.GetGuildOwner(s, member.GuildID))
 				return
 			}
 			utils.SendMessage(s, fmt.Sprintf("Banned <@!%s> who tried to give people admin roles without being whitelisted", auditEntry.UserID), utils.GetGuildOwner(s, member.GuildID))
@@ -178,9 +178,9 @@ func RoleUpdate(s *discordgo.Session, role *discordgo.GuildRoleUpdate) {
 	}
 	if guildRole.Permissions&0x8 == 0x8 {
 		err = s.GuildRoleDelete(role.GuildID, role.Role.ID)
-		err = s.GuildBanCreateWithReason(role.GuildID, auditEntry.UserID, "Banned for trying to give a role admin while not whitelisted. - https://github.com/Not-Cyrus/GoGuardian", 0)
-		if err != nil {
-			utils.SendMessage(s, fmt.Sprintf("Couldn't ban <@!%s> (Create Admin Role check): %s", auditEntry.UserID, err.Error()), utils.GetGuildOwner(s, role.GuildID))
+		err := utils.BanCreate(role.GuildID, auditEntry.UserID, "Banned for trying to give a role admin while not whitelisted. - https://github.com/Not-Cyrus/GoGuardian")
+		if len(err) != 0 {
+			utils.SendMessage(s, fmt.Sprintf("Couldn't ban <@!%s> (Create Admin Role check): %s", auditEntry.UserID, err), utils.GetGuildOwner(s, role.GuildID))
 			return
 		}
 		utils.SendMessage(s, fmt.Sprintf("Banned <@!%s> who was trying to create administrator roles without being whitelisted", auditEntry.UserID), utils.GetGuildOwner(s, role.GuildID))
@@ -207,12 +207,12 @@ func WebhookCreate(s *discordgo.Session, webhook *discordgo.WebhooksUpdate) {
 		}
 
 		err = s.WebhookDelete(webhook.ID)
-		err = s.GuildBanCreateWithReason(webhook.GuildID, webhook.User.ID, "Banned for trying to create webhooks roles without being whitelisted. - https://github.com/Not-Cyrus/GoGuardian", 0)
-		if err != nil {
-			utils.SendMessage(s, fmt.Sprintf("Couldn't take moderation action against the webhook (or person who made): %s", err.Error()), utils.GetGuildOwner(s, webhook.GuildID))
+		err := utils.BanCreate(webhook.GuildID, webhook.User.ID, "Banned for trying to create webhooks without being whitelisted. - https://github.com/Not-Cyrus/GoGuardian")
+		if len(err) != 0 {
+			utils.SendMessage(s, fmt.Sprintf("Couldn't take moderation action against the webhook (or person who made): %s", err), utils.GetGuildOwner(s, webhook.GuildID))
 			return
 		}
-		utils.SendMessage(s, fmt.Sprintf("Banned <@!%s> who was trying to create webhooks roles without being whitelisted", webhook.User.ID), utils.GetGuildOwner(s, webhook.GuildID))
+		utils.SendMessage(s, fmt.Sprintf("Banned <@!%s> who was trying to create webhooks without being whitelisted", webhook.User.ID), utils.GetGuildOwner(s, webhook.GuildID))
 	}
 }
 
