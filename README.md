@@ -2,7 +2,7 @@
 
 # Note to self-hosters
 
-If you're going to self host it, Please give me the proper credits with it. Unlike a certain renamed varaint, which I will not name self-hosted by people who classify themselves as a "tro", Thank you for using GoGuardian. 
+If you're going to self host it, Please give me the proper credits with it. Unlike a certain renamed variant, which I will not name self-hosted by people who classify themselves as a "tro", Thank you for using GoGuardian. 
 
 # Invite Link
 
