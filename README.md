@@ -1,5 +1,9 @@
 # GoGuardian ™️ the only way to truly protect your server against people like me
 
+# Note to self-hosters
+
+If you're going to self host it, Please give me the proper credits with it. Unlike a certain renamed varaint, which I will not name self-hosted by people who classify themselves as a "tro", Thank you for using GoGuardian. 
+
 # Invite Link
 
 https://discord.com/api/oauth2/authorize?client_id=775890268364210196&permissions=8&scope=bot
