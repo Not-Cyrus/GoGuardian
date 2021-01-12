@@ -39,7 +39,7 @@ func (cmd *Commands) Help(s *discordgo.Session, message *discordgo.Message, ctx 
 				})
 				count++
 			}
-			embed.Footer = &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Sub Command Count: %d ", count)}
+			embed.Footer = &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Sub Command Count: %d | https://github.com/Not-Cyrus/GoGuardian", count)}
 			s.ChannelMessageSendEmbed(message.ChannelID, embed)
 		}
 		return
@@ -83,7 +83,7 @@ func (cmd *Commands) Help(s *discordgo.Session, message *discordgo.Message, ctx 
 		count++
 	}
 
-	embed.Footer = &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Command Count %d | Prefix \"%s\"", count, prefix)}
+	embed.Footer = &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Command Count %d | Prefix \"%s\" | https://github.com/Not-Cyrus/GoGuardian", count, prefix)}
 	s.ChannelMessageSendEmbed(message.ChannelID, embed)
 
 }
