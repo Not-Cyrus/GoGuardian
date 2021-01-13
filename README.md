@@ -16,8 +16,6 @@ https://discord.com/api/oauth2/authorize?client_id=775890268364210196&permission
 
 - covers all endpoints minus emoji-spam/emoji-deletion. (including webhook creation)
 
-- uses fasthttp for where speed matters.
-
 # GoGuardian cons
 
 - that it uses JSON for a database (not really much of an issue unless you have like 10000 guilds or something)
