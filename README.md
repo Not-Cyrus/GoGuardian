@@ -16,7 +16,7 @@ https://discord.com/api/oauth2/authorize?client_id=775890268364210196&permission
 
 - covers all endpoints minus emoji-spam/emoji-deletion. (including webhook creation)
 
-- uses fasthttp for bans/audit logs (faster http library than the default one that comes with discordgo)
+- uses fasthttp for where speed matters.
 
 # GoGuardian cons
 
