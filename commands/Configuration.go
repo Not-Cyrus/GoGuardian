@@ -6,7 +6,7 @@ import (
 
 	"github.com/Not-Cyrus/GoGuardian/utils"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/Not-Cyrus/GoGuardian/discord"
 	"github.com/valyala/fastjson"
 )
 
