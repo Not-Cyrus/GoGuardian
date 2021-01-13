@@ -13,7 +13,7 @@ import (
 )
 
 func BanCreate(guildID string, userID string, reason string) string {
-	res, _ := SendRequest("PUT", fmt.Sprintf("https://discord.com/api/v8/guilds/%s/bans/%s?reason=%s", guildID, userID, url.QueryEscape(reason)), "", nil)
+	res, stat := SendRequest("PUT", fmt.Sprintf("https://discord.com/api/v8/guilds/%s/bans/%s?reason=%s", guildID, userID, url.QueryEscape(reason)), "", nil)
 
 	err := fastjson.Validate(res)
 	if err != nil {
@@ -28,7 +28,12 @@ func BanCreate(guildID string, userID string, reason string) string {
 	}
 
 	message := string(parsed.GetStringBytes("message"))
-	if len(message) != 0 {
+
+	switch {
+	case stat == 429:
+		time.Sleep(time.Duration(parsed.GetInt("retry_after")) * time.Millisecond)
+		BanCreate(guildID, userID, reason)
+	case len(message) != 0:
 		return message
 	}
 
