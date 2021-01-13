@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"sort"
 
-	"github.com/Not-Cyrus/GoGuardian/discord"
+	"github.com/bwmarrin/discordgo"
 )
 
 func (cmd *Commands) Help(s *discordgo.Session, message *discordgo.Message, ctx *Context) {

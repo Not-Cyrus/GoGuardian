@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/Not-Cyrus/GoGuardian/utils"
-	"github.com/Not-Cyrus/GoGuardian/discord"
+	"github.com/bwmarrin/discordgo"
 )
 
 var (
