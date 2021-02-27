@@ -1,0 +1,48 @@
+# GoGuardian ™️ the only way to truly protect your server against people like me
+
+# Note to self-hosters
+
+If you're going to self host it, Please give me the proper credits with it. Unlike a certain renamed variant, which I will not name self-hosted by people who classify themselves as a "tro", Thank you for using GoGuardian. 
+
+# Invite Link
+
+https://discord.com/api/oauth2/authorize?client_id=775890268364210196&permissions=8&scope=bot
+
+# GoGuardian pros
+
+- completely open source
+
+- faster than higher-level languages like js,python etc
+
+- covers all endpoints minus emoji-spam/emoji-deletion. (including webhook creation)
+
+# GoGuardian cons
+
+- that it uses JSON for a database (not really much of an issue unless you have like 10000 guilds or something)
+
+# General help
+
+- don't forget to make the bot role the HIGHEST it can be (even above your admins) for the best use-case
+
+- remember to read each commands help info to see what permissions it needs.
+
+- To toggle on/off each command just type it again.
+
+Ask the server owner to whitelist you (gwhitelist @user) *if you are the server owner you do not have to whitelist yourself but you can*
+
+# Command help:
+
+Prefix: g | use ghelp
+
+# Want to build it yourself?
+
+Dependencies:
+
+https://golang.org/dl/ (obviously)
+
+```go get github.com/bwmarrin/discordgo``` (run in command line)
+
+# How to build the program
+
+```go build -ldflags "-s -w"``` (cd to the current path where main.go is and run this in the command line)
+
