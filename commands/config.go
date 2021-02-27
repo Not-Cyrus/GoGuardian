@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Not-Cyrus/GoGuardianv2/database"
+	"github.com/Not-Cyrus/GoGuardian/database"
 	"github.com/bwmarrin/discordgo"
 	"go.mongodb.org/mongo-driver/bson"
 )

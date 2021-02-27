@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/Not-Cyrus/GoGuardianv2/commands"
+	"github.com/Not-Cyrus/GoGuardian/commands"
 	"github.com/bwmarrin/discordgo"
 )
 

@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Not-Cyrus/GoGuardianv2/api"
+	"github.com/Not-Cyrus/GoGuardian/api"
 	"github.com/bwmarrin/discordgo"
 )
 

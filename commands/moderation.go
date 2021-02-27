@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Not-Cyrus/GoGuardianv2/utils"
+	"github.com/Not-Cyrus/GoGuardian/utils"
 	"github.com/bwmarrin/discordgo"
 )
 

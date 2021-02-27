@@ -6,10 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Not-Cyrus/GoGuardianv2/utils"
+	"github.com/Not-Cyrus/GoGuardian/utils"
 	"go.mongodb.org/mongo-driver/bson"
 
-	"github.com/Not-Cyrus/GoGuardianv2/database"
+	"github.com/Not-Cyrus/GoGuardian/database"
 	"github.com/bwmarrin/discordgo"
 )
 

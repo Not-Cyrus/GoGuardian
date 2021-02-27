@@ -1,4 +1,4 @@
-module github.com/Not-Cyrus/GoGuardianv2
+module github.com/Not-Cyrus/GoGuardian
 
 go 1.15
 

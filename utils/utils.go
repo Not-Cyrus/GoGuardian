@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Not-Cyrus/GoGuardianv2/database"
+	"github.com/Not-Cyrus/GoGuardian/database"
 	"github.com/bwmarrin/discordgo"
 )
 
