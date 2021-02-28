@@ -30,7 +30,7 @@ You will need these dependencies:
 
 ```YAML
 https://golang.org/dl/ - download this 
-go get github.com/bwmarrin/discordgo - command line
+go get github.com/bwmarrin/discordgo@v0.22.0 - command line
 go get go.mongodb.org/mongo-driver - command line
 ```
 
