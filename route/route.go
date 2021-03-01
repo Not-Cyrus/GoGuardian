@@ -41,6 +41,10 @@ func init() {
 		Cooldown: 1,
 	})
 
+	CommandRoute.Add("fox", CommandRoute.Fox, &commands.Config{
+		Cooldown: 3,
+	})
+
 	CommandRoute.Add("help", CommandRoute.Help, &commands.Config{
 		Cooldown: 1,
 	})

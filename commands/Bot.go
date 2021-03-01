@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/Not-Cyrus/GoGuardian/events"
@@ -38,6 +39,11 @@ func (cmd *Commands) Credits(s *discordgo.Session, m *discordgo.Message, ctx *Co
 		Footer: &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Requested by: %s | made by https://github.com/Not-Cyrus", m.Author.Username)},
 		Color:  0x36393F,
 	})
+}
+
+func (cmds *Commands) Fox(s *discordgo.Session, m *discordgo.Message, ctx *Context) {
+	rand.Seed(time.Now().Unix())
+	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("https://raw.githubusercontent.com/Not-Cyrus/fox-pic-repo/main/%d.jpg", rand.Intn(126-0)+0))
 }
 
 func (cmd *Commands) Invite(s *discordgo.Session, m *discordgo.Message, ctx *Context) {
