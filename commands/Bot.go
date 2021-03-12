@@ -43,7 +43,16 @@ func (cmd *Commands) Credits(s *discordgo.Session, m *discordgo.Message, ctx *Co
 
 func (cmds *Commands) Fox(s *discordgo.Session, m *discordgo.Message, ctx *Context) {
 	rand.Seed(time.Now().Unix())
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("https://raw.githubusercontent.com/Not-Cyrus/fox-pic-repo/main/%d.jpg", rand.Intn(126-0)+0))
+
+	resBody, err := utils.MakeRequest("https://raw.githubusercontent.com/Not-Cyrus/fox-pic-repo/main/count.txt")
+	if err != nil {
+		s.ChannelMessageSend(m.ChannelID, "Error: could not fetch the amount of fox pics, try re-running the command.")
+		return
+	}
+
+	maxcount, _ := strconv.Atoi(strings.TrimSuffix(string(resBody),"\n"))
+
+	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("https://raw.githubusercontent.com/Not-Cyrus/fox-pic-repo/main/%d.jpg", rand.Intn(maxcount-0)+0))
 }
 
 func (cmd *Commands) Invite(s *discordgo.Session, m *discordgo.Message, ctx *Context) {
