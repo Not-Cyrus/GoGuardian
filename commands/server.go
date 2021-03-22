@@ -15,7 +15,7 @@ func (cmd *Commands) MemberCount(s *discordgo.Session, m *discordgo.Message, ctx
 	s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 		Title: guild.Name,
 		Fields: []*discordgo.MessageEmbedField{
-			&discordgo.MessageEmbedField{Name: "Members", Value: fmt.Sprint(guild.MemberCount), Inline: true},
+			{Name: "Members", Value: fmt.Sprint(guild.MemberCount), Inline: true},
 		},
 		Footer: &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Requested by: %s | made by https://github.com/Not-Cyrus", m.Author.Username)},
 		Color:  0x36393F,
@@ -105,12 +105,12 @@ func (cmd *Commands) ServerInfo(s *discordgo.Session, m *discordgo.Message, ctx 
 	s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 		Title: fmt.Sprintf("%s | Server Info", guild.Name),
 		Fields: []*discordgo.MessageEmbedField{
-			&discordgo.MessageEmbedField{Name: "Members:", Value: fmt.Sprint(guild.MemberCount), Inline: true},
-			&discordgo.MessageEmbedField{Name: "Roles:", Value: fmt.Sprint(len(guild.Roles)), Inline: true},
-			&discordgo.MessageEmbedField{Name: "Channels:", Value: fmt.Sprint(len(guild.Channels)), Inline: true},
-			&discordgo.MessageEmbedField{Name: "Server Created on", Value: guildTime.Format("01/02/2006"), Inline: true},
-			&discordgo.MessageEmbedField{Name: "Server Owner", Value: fmt.Sprintf("<@%s>", guild.OwnerID), Inline: true},
-			&discordgo.MessageEmbedField{Name: "Server Region", Value: guild.Region, Inline: true},
+			{Name: "Members:", Value: fmt.Sprint(guild.MemberCount), Inline: true},
+			{Name: "Roles:", Value: fmt.Sprint(len(guild.Roles)), Inline: true},
+			{Name: "Channels:", Value: fmt.Sprint(len(guild.Channels)), Inline: true},
+			{Name: "Server Created on", Value: guildTime.Format("01/02/2006"), Inline: true},
+			{Name: "Server Owner", Value: fmt.Sprintf("<@%s>", guild.OwnerID), Inline: true},
+			{Name: "Server Region", Value: guild.Region, Inline: true},
 		},
 		Footer:    &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Requested by: %s | made by https://github.com/Not-Cyrus", m.Author.Username)},
 		Thumbnail: &discordgo.MessageEmbedThumbnail{URL: guild.IconURL()},
