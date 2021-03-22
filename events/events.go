@@ -40,9 +40,16 @@ func ChannelRemove(s *discordgo.Session, event *discordgo.ChannelDelete) {
 }
 
 func CreateGuild(s *discordgo.Session, event *discordgo.GuildCreate) {
-	database.Database.CreateGuild(utils.BotUser, event.Guild)
 	muteX.Lock()
+
+	s.State.GuildAdd(event.Guild)
+	database.Database.CreateGuild(utils.BotUser, event.Guild)
+
 	defer muteX.Unlock()
+
+	if _, ok := guilds[event.Guild.ID]; ok {
+		return
+	}
 
 	guilds[event.Guild.ID] = event.Guild.MemberCount
 
