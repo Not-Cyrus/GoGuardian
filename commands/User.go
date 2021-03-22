@@ -39,12 +39,12 @@ func (cmd *Commands) UserInfo(s *discordgo.Session, m *discordgo.Message, ctx *C
 		Thumbnail: &discordgo.MessageEmbedThumbnail{URL: m.Mentions[0].AvatarURL("")},
 
 		Fields: []*discordgo.MessageEmbedField{
-			&discordgo.MessageEmbedField{Name: "Username:", Value: m.Mentions[0].Username, Inline: true},
-			&discordgo.MessageEmbedField{Name: "Account Made On:", Value: memberCreatedAt.Format("01/02/2006"), Inline: true},
-			&discordgo.MessageEmbedField{Name: "Account Joined On:", Value: memberJoinedAt.Format("01/02/2006"), Inline: true},
-			&discordgo.MessageEmbedField{Name: "Bot?", Value: strconv.FormatBool(m.Mentions[0].Bot), Inline: true},
-			&discordgo.MessageEmbedField{Name: "Highest Role:", Value: roleID, Inline: true},
-			&discordgo.MessageEmbedField{Name: "Status", Value: "Coming back later.", Inline: true},
+			{Name: "Username:", Value: m.Mentions[0].Username, Inline: true},
+			{Name: "Account Made On:", Value: memberCreatedAt.Format("01/02/2006"), Inline: true},
+			{Name: "Account Joined On:", Value: memberJoinedAt.Format("01/02/2006"), Inline: true},
+			{Name: "Bot?", Value: strconv.FormatBool(m.Mentions[0].Bot), Inline: true},
+			{Name: "Highest Role:", Value: roleID, Inline: true},
+			{Name: "Status", Value: "Coming back later.", Inline: true},
 		},
 
 		Footer: &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Requested by: %s | made by https://github.com/Not-Cyrus", m.Author.Username)},
