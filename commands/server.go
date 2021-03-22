@@ -64,7 +64,7 @@ func (cmd *Commands) ServerBanner(s *discordgo.Session, m *discordgo.Message, ct
 
 	s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 		Title: fmt.Sprintf("%s's server banner", guild.Name),
-		Image: &discordgo.MessageEmbedImage{URL: guild.Banner},
+		Image: &discordgo.MessageEmbedImage{URL: discordgo.EndpointGuildBanner(guild.ID, guild.Banner)},
 
 		Footer: &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Requested by: %s | made by https://github.com/Not-Cyrus", m.Author.Username)},
 		Color:  0x36393F,
