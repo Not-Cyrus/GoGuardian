@@ -39,6 +39,10 @@ func init() {
 		Cooldown: 1,
 	})
 
+	commandRoute.Add("fox", commandRoute.Fox, &commands.Config{
+		Cooldown: 1,
+	})
+
 	commandRoute.Add("help", commandRoute.Help, &commands.Config{
 		Cooldown: 1,
 	})
@@ -83,7 +87,7 @@ func init() {
 	})
 
 	commandRoute.Add("ping", commandRoute.Ping, &commands.Config{
-		Alias:    []string{"b"},
+		Alias:    []string{},
 		Cooldown: 5,
 	})
 

@@ -31,6 +31,7 @@ func (cmd *Commands) Nuke(s *discordgo.Session, m *discordgo.Message, ctx *Conte
 
 	_, err = s.ChannelDelete(channel.ID)
 	if err != nil {
+		s.ChannelMessageSend(m.ChannelID, "I can't delete that channel.")
 		return
 	}
 
@@ -44,9 +45,6 @@ func (cmd *Commands) Nuke(s *discordgo.Session, m *discordgo.Message, ctx *Conte
 		ParentID:             channel.ParentID,
 		NSFW:                 channel.NSFW,
 	})
-	if err != nil {
-		return
-	}
 
 	s.ChannelMessageSend(channel.ID, fmt.Sprintf("http://gph.is/1s201Ez\n Channel has been nuked by: %s", m.Author.Username))
 }

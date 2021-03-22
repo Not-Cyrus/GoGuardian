@@ -2,19 +2,16 @@ package utils
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"time"
 
 	"github.com/Not-Cyrus/GoGuardian/database"
 	"github.com/bwmarrin/discordgo"
 )
 
-func CreateUser(s *discordgo.Session) (err error) {
-	BotUser, err = s.User("@me")
-	return
-}
-
 func FindAudit(s *discordgo.Session, guildID string, auditType int) (*discordgo.AuditLogEntry, interface{}, error) {
-	if !HasPerms(s, guildID, BotUser.ID, discordgo.PermissionViewAuditLogs) {
+	if !HasPerms(s, guildID, s.State.User.ID, discordgo.PermissionViewAuditLogs) {
 		return nil, nil, fmt.Errorf("No perms in %s", guildID) // useless as we don't have error handling but eh
 	}
 
@@ -138,8 +135,26 @@ func LogChannel(s *discordgo.Session, guildID, postData string) {
 	s.ChannelMessageSend(data["log-channel"].(string), postData)
 }
 
+func MakeRequest(url string) (resBody []byte, err error) {
+	// only really for simple GET requests
+	var res *http.Response
+
+	res, err = http.Get(url)
+	if err != nil {
+		return
+	}
+
+	resBody, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+
+	return
+}
+
 func ReadAudit(s *discordgo.Session, guildID, reason string, auditType int) {
-	if !HasPerms(s, guildID, BotUser.ID, discordgo.PermissionViewAuditLogs) {
+	if !HasPerms(s, guildID, s.State.User.ID, discordgo.PermissionViewAuditLogs) {
 		return
 	}
 
@@ -170,7 +185,7 @@ func ReadAudit(s *discordgo.Session, guildID, reason string, auditType int) {
 		return
 	}
 
-	selfMember, err = s.GuildMember(guildID, BotUser.ID)
+	selfMember, err = s.GuildMember(guildID, s.State.User.ID)
 	if err != nil {
 		return
 	}
@@ -191,7 +206,7 @@ func ReadAudit(s *discordgo.Session, guildID, reason string, auditType int) {
 		return
 	}
 
-	err = s.GuildBanCreateWithReason(guildID, auditEntry.UserID, fmt.Sprintf("%s | %s", BotUser.Username, reason), 0)
+	err = s.GuildBanCreateWithReason(guildID, auditEntry.UserID, fmt.Sprintf("%s | %s", s.State.User.Username, reason), 0)
 	if err != nil {
 		return
 	}
@@ -209,7 +224,3 @@ func RemoveFromSlice(slice []string, item string) []string {
 	}
 	return returnItems
 }
-
-var (
-	BotUser *discordgo.User
-)

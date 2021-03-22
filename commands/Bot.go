@@ -17,7 +17,7 @@ func (cmd *Commands) BotInfo(s *discordgo.Session, m *discordgo.Message, ctx *Co
 		Title: "Bot Info",
 
 		Fields: []*discordgo.MessageEmbedField{
-			{Name: "Name:", Value: utils.BotUser.Username, Inline: true},
+			{Name: "Name:", Value: s.State.User.Username, Inline: true},
 			{Name: "Server Count:", Value: fmt.Sprint(events.GuildCount), Inline: true},
 			{Name: "User Count:", Value: fmt.Sprint(events.MemberCount), Inline: true},
 			{Name: "Ping:", Value: fmt.Sprintf("%s", s.HeartbeatLatency().Round(1*time.Millisecond)), Inline: true},
@@ -26,7 +26,7 @@ func (cmd *Commands) BotInfo(s *discordgo.Session, m *discordgo.Message, ctx *Co
 		},
 
 		Footer:    &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Requested by: %s | made by https://github.com/Not-Cyrus", m.Author.Username)},
-		Thumbnail: &discordgo.MessageEmbedThumbnail{URL: utils.BotUser.AvatarURL("500")},
+		Thumbnail: &discordgo.MessageEmbedThumbnail{URL: s.State.User.AvatarURL("500")},
 		Color:     0x36393F,
 	})
 }
@@ -60,7 +60,7 @@ func (cmd *Commands) Invite(s *discordgo.Session, m *discordgo.Message, ctx *Con
 
 	s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 		Fields: []*discordgo.MessageEmbedField{
-			{Name: "Bot Invite", Value: fmt.Sprintf("[Click Here](https://discord.com/api/oauth2/authorize?client_id=%s&permissions=8&scope=bot)", utils.BotUser.ID), Inline: true},
+			{Name: "Bot Invite", Value: fmt.Sprintf("[Click Here](https://discord.com/api/oauth2/authorize?client_id=%s&permissions=8&scope=bot)", s.State.User.ID), Inline: true},
 		},
 		Footer: &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Requested by: %s | made by https://github.com/Not-Cyrus", m.Author.Username)},
 		Color:  0x36393F,

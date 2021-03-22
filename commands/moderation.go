@@ -24,7 +24,7 @@ func (cmd *Commands) Ban(s *discordgo.Session, m *discordgo.Message, ctx *Contex
 		return
 	}
 
-	err = s.GuildBanCreateWithReason(m.GuildID, m.Mentions[0].ID, fmt.Sprintf("%s | Command ban", utils.BotUser.Username), 0)
+	err = s.GuildBanCreateWithReason(m.GuildID, m.Mentions[0].ID, fmt.Sprintf("%s | Command ban", s.State.User.Username), 0)
 
 	if err != nil {
 		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Could not ban <@%s>", m.Mentions[0].ID))
@@ -54,7 +54,7 @@ func (cmd *Commands) Kick(s *discordgo.Session, m *discordgo.Message, ctx *Conte
 		return
 	}
 
-	err = s.GuildMemberDeleteWithReason(m.GuildID, m.Mentions[0].ID, fmt.Sprintf("%s | Command kick", utils.BotUser.Username))
+	err = s.GuildMemberDeleteWithReason(m.GuildID, m.Mentions[0].ID, fmt.Sprintf("%s | Command kick", s.State.User.Username))
 
 	if err != nil {
 		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Could not kick <@%s>", m.Mentions[0].ID))
@@ -116,7 +116,7 @@ func (cmd *Commands) Unban(s *discordgo.Session, m *discordgo.Message, ctx *Cont
 	}
 
 	for _, ban := range bans {
-		if !strings.Contains(ban.Reason, utils.BotUser.Username) {
+		if !strings.Contains(ban.Reason, s.State.User.Username) {
 			s.GuildBanDelete(m.GuildID, ban.User.ID)
 			unbancount++
 			continue
@@ -124,7 +124,7 @@ func (cmd *Commands) Unban(s *discordgo.Session, m *discordgo.Message, ctx *Cont
 		nukebot++
 	}
 	s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
-		Description: fmt.Sprintf("Unbanned %d members | Didn't ban %d account(s) banned by %s.", unbancount, nukebot, utils.BotUser.Username),
+		Description: fmt.Sprintf("Unbanned %d members | Didn't ban %d account(s) banned by %s.", unbancount, nukebot, s.State.User.Username),
 		Footer:      &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Mass-Unban started by: %s", m.Author.Username)},
 		Color:       0x36393F,
 	})

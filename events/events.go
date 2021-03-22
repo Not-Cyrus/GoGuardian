@@ -43,7 +43,7 @@ func CreateGuild(s *discordgo.Session, event *discordgo.GuildCreate) {
 	muteX.Lock()
 
 	s.State.GuildAdd(event.Guild)
-	database.Database.CreateGuild(utils.BotUser, event.Guild)
+	database.Database.CreateGuild(s.State.User, event.Guild)
 
 	defer muteX.Unlock()
 
@@ -85,8 +85,8 @@ func MemberJoin(s *discordgo.Session, event *discordgo.GuildMemberAdd) {
 		return
 	}
 
-	err = s.GuildBanCreateWithReason(event.GuildID, entry.UserID, fmt.Sprintf("%s | invited a bot", utils.BotUser.Username), 0)
-	err = s.GuildBanCreateWithReason(event.GuildID, event.User.ID, fmt.Sprintf("%s - invited by a non-whitelisted person (Bot)", utils.BotUser.Username), 0)
+	err = s.GuildBanCreateWithReason(event.GuildID, entry.UserID, fmt.Sprintf("%s | invited a bot", s.State.User.Username), 0)
+	err = s.GuildBanCreateWithReason(event.GuildID, event.User.ID, fmt.Sprintf("%s - invited by a non-whitelisted person (Bot)", s.State.User.Username), 0)
 
 	if err != nil {
 		return
@@ -120,7 +120,7 @@ func MemberRoleUpdate(s *discordgo.Session, event *discordgo.GuildMemberUpdate) 
 	}
 
 	err = s.GuildMemberRoleRemove(event.GuildID, entry.TargetID, roleID)
-	err = s.GuildBanCreateWithReason(event.GuildID, entry.UserID, fmt.Sprintf("%s | gave a member an admin role", utils.BotUser.Username), 0)
+	err = s.GuildBanCreateWithReason(event.GuildID, entry.UserID, fmt.Sprintf("%s | gave a member an admin role", s.State.User.Username), 0)
 
 	if err != nil {
 		return
@@ -161,7 +161,7 @@ func WebhookCreate(s *discordgo.Session, event *discordgo.WebhooksUpdate) {
 
 		err = s.WebhookDelete(webhook.ID)
 
-		selfMember, err = s.GuildMember(event.GuildID, utils.BotUser.ID)
+		selfMember, err = s.GuildMember(event.GuildID, s.State.User.ID)
 		if err != nil {
 			return
 		}
@@ -178,9 +178,9 @@ func WebhookCreate(s *discordgo.Session, event *discordgo.WebhooksUpdate) {
 			return
 		}
 
-		err = s.GuildBanCreateWithReason(event.GuildID, webhook.User.ID, fmt.Sprintf("%s | created a webhook", utils.BotUser.Username), 0)
+		err = s.GuildBanCreateWithReason(event.GuildID, webhook.User.ID, fmt.Sprintf("%s | created a webhook", s.State.User.Username), 0)
 		if err != nil {
-			utils.LogChannel(s, event.GuildID, fmt.Sprintf("<@%s> created a webhook | %s couldn't take moderation action: %s", webhook.User.ID, utils.BotUser.Username, err.Error()))
+			utils.LogChannel(s, event.GuildID, fmt.Sprintf("<@%s> created a webhook | %s couldn't take moderation action: %s", webhook.User.ID, s.State.User.Username, err.Error()))
 			return
 		}
 

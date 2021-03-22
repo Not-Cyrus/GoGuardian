@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 
-	"github.com/Not-Cyrus/GoGuardian/utils"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -14,14 +13,14 @@ func (cmd *Commands) Help(s *discordgo.Session, m *discordgo.Message, ctx *Conte
 
 		defaultHelp.Description = fmt.Sprintf("Below are all the commands categories, type `%shelp [category]` to view all commands in the category.", ctx.Prefix)
 		defaultHelp.Footer = &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Requested by: %s | made by https://github.com/Not-Cyrus", m.Author.Username)}
-		defaultHelp.Thumbnail = &discordgo.MessageEmbedThumbnail{URL: utils.BotUser.AvatarURL("500")}
+		defaultHelp.Thumbnail = &discordgo.MessageEmbedThumbnail{URL: s.State.User.AvatarURL("500")}
 
 		s.ChannelMessageSendEmbed(m.ChannelID, defaultHelp)
 		return
 	}
 
 	certainHelp.Footer = &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Requested by: %s | made by https://github.com/Not-Cyrus", m.Author.Username)}
-	certainHelp.Thumbnail = &discordgo.MessageEmbedThumbnail{URL: utils.BotUser.AvatarURL("500")}
+	certainHelp.Thumbnail = &discordgo.MessageEmbedThumbnail{URL: s.State.User.AvatarURL("500")}
 
 	switch ctx.Fields[0] {
 
@@ -42,10 +41,10 @@ func (cmd *Commands) Help(s *discordgo.Session, m *discordgo.Message, ctx *Conte
 		certainHelp.Description = fmt.Sprintf("`%sprefix [prefix]` | Sets the bot prefix\n`%slogchannel (server owner)` | Sets the log channel for all notifications relating to the anti-nuke.\n`%santiinvite [on/off]` | Enables/Disables the anti invite system", ctx.Prefix, ctx.Prefix, ctx.Prefix)
 	default:
 
-		defaultHelp.Title = fmt.Sprintf("%s anti-nuke", utils.BotUser.Username)
+		defaultHelp.Title = fmt.Sprintf("%s anti-nuke", s.State.User.Username)
 		defaultHelp.Description = fmt.Sprintf("Below are all the commands categories, type `%shelp [category]` to view all commands in the category.", ctx.Prefix)
 		defaultHelp.Footer = &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Requested by: %s | made by https://github.com/Not-Cyrus", m.Author.Username)}
-		defaultHelp.Thumbnail = &discordgo.MessageEmbedThumbnail{URL: utils.BotUser.AvatarURL("500")}
+		defaultHelp.Thumbnail = &discordgo.MessageEmbedThumbnail{URL: s.State.User.AvatarURL("500")}
 
 		s.ChannelMessageSendEmbed(m.ChannelID, defaultHelp)
 		return
@@ -59,9 +58,9 @@ func (cmd *Commands) Setup(s *discordgo.Session, m *discordgo.Message, ctx *Cont
 	s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 		Title: "Setup",
 		Fields: []*discordgo.MessageEmbedField{
-			{Name: "How to setup:", Value: fmt.Sprintf("%s comes ready to protect your server on join, so you don't need to do anything besides **MAKE SURE** the bot is above every other role. The bot needs to be above everyone else to be able to ban.\n", utils.BotUser.Username), Inline: true},
+			{Name: "How to setup:", Value: fmt.Sprintf("%s comes ready to protect your server on join, so you don't need to do anything besides **MAKE SURE** the bot is above every other role. The bot needs to be above everyone else to be able to ban.\n", s.State.User.Username), Inline: true},
 			{Name: "Whitelist:", Value: fmt.Sprintf("To exclude someone from being banned, type `%swhitelist [@user]`. Only the server owner may whitelist and unwhitelist members.\n", ctx.Prefix)},
-			{Name: "Logs:", Value: fmt.Sprintf("With %s, you can set a channel to log whenever %s bans someone for attempting to nuke. To set the log channel, type `%slog`\n", utils.BotUser.Username, utils.BotUser.Username, ctx.Prefix)},
+			{Name: "Logs:", Value: fmt.Sprintf("With %s, you can set a channel to log whenever %s bans someone for attempting to nuke. To set the log channel, type `%slog`\n", s.State.User.Username, s.State.User.Username, ctx.Prefix)},
 			{Name: "Support:", Value: "If you need any help, click [here](https://github.com/Not-Cyrus/GoGuardian/issues)"},
 		},
 		Color: 0x36393F,

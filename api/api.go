@@ -6,7 +6,6 @@ import (
 
 	"github.com/Not-Cyrus/GoGuardian/commands"
 	"github.com/Not-Cyrus/GoGuardian/events"
-	"github.com/Not-Cyrus/GoGuardian/utils"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -24,10 +23,9 @@ func (b *Bot) Shard(token string, shardCount, shardID int) {
 	// ** Setup session ** //
 
 	s, err := discordgo.New(fmt.Sprintf("Bot %s", token))
-	err = utils.CreateUser(s)
 
 	if err != nil {
-		fmt.Printf("[Error]: %s", err.Error())
+		fmt.Printf("[Error creating a shard]: %s", err.Error())
 	}
 
 	s.ShardCount = shardCount
