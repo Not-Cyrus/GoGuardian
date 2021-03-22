@@ -59,10 +59,10 @@ func (cmd *Commands) Setup(s *discordgo.Session, m *discordgo.Message, ctx *Cont
 	s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 		Title: "Setup",
 		Fields: []*discordgo.MessageEmbedField{
-			&discordgo.MessageEmbedField{Name: "How to setup:", Value: fmt.Sprintf("%s comes ready to protect your server on join, so you don't need to do anything besides **MAKE SURE** the bot is above every other role. The bot needs to be above everyone else to be able to ban.\n", utils.BotUser.Username), Inline: true},
-			&discordgo.MessageEmbedField{Name: "Whitelist:", Value: fmt.Sprintf("To exclude someone from being banned, type `%swhitelist [@user]`. Only the server owner may whitelist and unwhitelist members.\n", ctx.Prefix)},
-			&discordgo.MessageEmbedField{Name: "Logs:", Value: fmt.Sprintf("With %s, you can set a channel to log whenever %s bans someone for attempting to nuke. To set the log channel, type `%slog`\n", utils.BotUser.Username, utils.BotUser.Username, ctx.Prefix)},
-			&discordgo.MessageEmbedField{Name: "Support:", Value: "If you need any help, click [here](https://github.com/Not-Cyrus/GoGuardian/issues)"},
+			{Name: "How to setup:", Value: fmt.Sprintf("%s comes ready to protect your server on join, so you don't need to do anything besides **MAKE SURE** the bot is above every other role. The bot needs to be above everyone else to be able to ban.\n", utils.BotUser.Username), Inline: true},
+			{Name: "Whitelist:", Value: fmt.Sprintf("To exclude someone from being banned, type `%swhitelist [@user]`. Only the server owner may whitelist and unwhitelist members.\n", ctx.Prefix)},
+			{Name: "Logs:", Value: fmt.Sprintf("With %s, you can set a channel to log whenever %s bans someone for attempting to nuke. To set the log channel, type `%slog`\n", utils.BotUser.Username, utils.BotUser.Username, ctx.Prefix)},
+			{Name: "Support:", Value: "If you need any help, click [here](https://github.com/Not-Cyrus/GoGuardian/issues)"},
 		},
 		Color: 0x36393F,
 	})
@@ -77,10 +77,10 @@ var (
 	defaultHelp = &discordgo.MessageEmbed{
 
 		Fields: []*discordgo.MessageEmbedField{
-			&discordgo.MessageEmbedField{Name: "**Information**", Value: "*`Displays information related commands`*"},
-			&discordgo.MessageEmbedField{Name: "**Anti**", Value: "*`Displays anti-nuke related commands`*"},
-			&discordgo.MessageEmbedField{Name: "**Moderation**", Value: "*`Displays Moderation related commands.`*"},
-			&discordgo.MessageEmbedField{Name: "**Settings**", Value: "‎‎‎‎‎‏‏‎*`Displays settings releated commands`*"},
+			{Name: "**Information**", Value: "*`Displays information related commands`*"},
+			{Name: "**Anti**", Value: "*`Displays anti-nuke related commands`*"},
+			{Name: "**Moderation**", Value: "*`Displays Moderation related commands.`*"},
+			{Name: "**Settings**", Value: "‎‎‎‎‎‏‏‎*`Displays settings releated commands`*"},
 		},
 
 		Color: 0x36393F,
