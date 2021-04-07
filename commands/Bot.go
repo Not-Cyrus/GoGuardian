@@ -56,6 +56,7 @@ func (cmds *Commands) Fox(s *discordgo.Session, m *discordgo.Message, ctx *Conte
 	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("https://raw.githubusercontent.com/Not-Cyrus/fox-pic-repo/main/%d.jpg", rand.Intn(maxcount-0)+0))
 }
 
+
 func (cmd *Commands) Invite(s *discordgo.Session, m *discordgo.Message, ctx *Context) {
 
 	s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
