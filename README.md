@@ -64,7 +64,6 @@ A: Due to the database that is used, Complex setup | Easier to read code (kinda 
 
 Q: Why do I need to specify the amount of shards and what are they?
 A: Simple answer, more servers your bot is in the more shards you need.
-For example, the live bot that's currently running this code has 29 shards and is in 800+ guilds (as of 26/02/2021)
 
 Q: What is the recommended amount of shards?
 A: Unless you're using this for hundreds of guilds, It's safe to use 1.
