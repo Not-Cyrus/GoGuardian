@@ -130,7 +130,7 @@ func MemberRoleUpdate(s *discordgo.Session, event *discordgo.GuildMemberUpdate) 
 }
 
 func Ready(s *discordgo.Session, event *discordgo.Ready) {
-	s.UpdateStreamingStatus(2, fmt.Sprintf(">help | Shard %d", s.ShardID), "https://twitch.tv/discord")
+	s.UpdateStreamingStatus(2, fmt.Sprintf(">help | Shard %d/%d", s.ShardID, s.ShardCount), "https://twitch.tv/discord")
 	fmt.Printf("Connected to shard %d\n", s.ShardID)
 }
 func RoleCreate(s *discordgo.Session, event *discordgo.GuildRoleCreate) {
