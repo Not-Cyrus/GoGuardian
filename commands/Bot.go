@@ -71,7 +71,7 @@ func (cmd *Commands) Invite(s *discordgo.Session, m *discordgo.Message, ctx *Con
 func (cmd *Commands) Ping(s *discordgo.Session, m *discordgo.Message, ctx *Context) {
 
 	s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
-		Title:  fmt.Sprintf("Bot Ping: `%s` | on shard `%d`", s.HeartbeatLatency().Round(1*time.Millisecond), s.ShardID),
+		Title:  fmt.Sprintf("Bot Ping: `%s`\nCurrent shard `%d/%d`", s.HeartbeatLatency().Round(1*time.Millisecond), s.ShardID, s.ShardCount),
 		Footer: &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("Requested by: %s | made by https://github.com/Not-Cyrus", m.Author.Username)},
 		Color:  0x36393F,
 	})
