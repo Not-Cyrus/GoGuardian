@@ -1,45 +1,73 @@
 # GoGuardian ™️ the only way to truly protect your server against people like me
 
-# Invite Link
 
-https://discord.com/api/oauth2/authorize?client_id=775890268364210196&permissions=8&scope=bot
+# Setup GoGuardian database:
 
-# GoGuardian pros
+[How to setup a mongoDB server on windows 10](https://youtu.be/ABAOvvBh99w)
 
-- completely open source
+[How to setup a mongoDB server on linux (Ubuntu)](https://youtu.be/JTvGImRESzg)
 
-- faster than higher-level languages like js,python etc
+```YAML
+First, setup a mongoDB database
 
-- covers all endpoints minus emoji-spam/emoji-deletion. (including webhook creation)
+After you're in the mongoDB shell (followed the tutorials above)
 
+Run these commands:
+```
+```javascript
 
-# GoGuardian cons
+use Bot
+db.whitelist.insertOne({useless: "github.com/Not-Cyrus"})
+```
 
-- that it uses JSON for a database (not really much of an issue unless you have like 10000 guilds or something)
+# MAKE SURE your bot has this intent (or it will not work):<img src="Intent.png">
+
+# Now you're done! Either use the binaries or build it yourself, it's up to you.
+
+# So, you want to build it yourself?
+
+You will need these dependencies:
+
+```YAML
+https://golang.org/dl/ - download this (>=1.15 (recommended: latest))
+go get github.com/bwmarrin/discordgo@v0.22.0 - command line
+go get go.mongodb.org/mongo-driver - command line
+```
+
+After you've installed the dependencies, you are good to run this command:
+
+```YAML
+cd (directory of the main.go file)
+
+go build -ldflags "-s -w"
+
+(you are also welcome to run it straight from the go file.)
+
+go run main.go
+```
+
 
 # General help
 
-- don't forget to make the bot role the HIGHEST it can be (even above your admins) for the best use-case
+```YAML
+Q: What is a token?
+A: A token is an authentication "ticket" that allows the bot to function.
 
-- remember to read each commands help info to see what permissions it needs.
+Q: How do I make a bot/How do I get it's token?
+A: Go Here https://discord.com/developers/applications then create an application (if you don't know how use youtube.)
 
-- To toggle on/off each command just type it again.
+Q: What is this bot?
+A: This is a bot that protects your server from being "nuked"/"wizzed"
 
-Ask the server owner to whitelist you (gwhitelist @user) *if you are the server owner you do not have to whitelist yourself but you can*
+Q: Why is the setup so complex?
+A: Due to the database that is used, Complex setup | Easier to read code (kinda my codes pretty bad)
 
-# Command help:
+Q: Why do I need to specify the amount of shards and what are they?
+A: Simple answer, more servers your bot is in the more shards you need.
 
-Prefix: g | use ghelp
+Q: What is the recommended amount of shards?
+A: Unless you're using this for hundreds of guilds, It's safe to use 1.
 
-# Want to build it yourself?
 
-Dependencies:
-
-https://golang.org/dl/ (obviously)
-
-```go get github.com/bwmarrin/discordgo``` (run in command line)
-
-# How to build the program
-
-```go build -ldflags "-s -w"``` (cd to the current path where main.go is and run this in the command line)
-
+If you have any other questions, Make an issue at https://github.com/Not-Cyrus/GoGuardian/issues (I would link my discord, but they like to ban me very often.)
+```

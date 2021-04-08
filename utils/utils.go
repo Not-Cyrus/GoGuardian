@@ -3,97 +3,224 @@ package utils
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
+	"net/http"
+	"time"
 
+	"github.com/Not-Cyrus/GoGuardian/database"
 	"github.com/bwmarrin/discordgo"
-	"github.com/valyala/fastjson"
 )
 
-func FindConfig(guildID string) (*fastjson.Value, *fastjson.Value) {
-	FileContents := ReadFile("Config.json")
-	parsed, err := parser.Parse(FileContents)
+func FindAudit(s *discordgo.Session, guildID string, auditType int) (*discordgo.AuditLogEntry, interface{}, error) {
+	if !HasPerms(s, guildID, s.State.User.ID, discordgo.PermissionViewAuditLogs) {
+		return nil, nil, fmt.Errorf("No perms in %s", guildID) // useless as we don't have error handling but eh
+	}
+
+	audit, err := s.GuildAuditLog(guildID, "", "", auditType, 25)
+
+	if err != nil || len(audit.AuditLogEntries) == 0 {
+		return nil, nil, err
+	}
+
+	auditLog := audit.AuditLogEntries[0]
+
+	if whitelisted := database.Database.IsWhitelisted(guildID, auditLog.UserID); whitelisted {
+		return nil, nil, err
+	}
+
+	current := time.Now()
+	entryTime, err := discordgo.SnowflakeTimestamp(auditLog.ID)
 	if err != nil {
-		SendMessage(nil, fmt.Sprintf("Error parsing json %s", err.Error()), "")
-		return nil, nil
+		return nil, nil, err
 	}
-	if !fastjson.Exists([]byte(FileContents), "Guilds", guildID) {
-		parsed.Get("Guilds").Set(guildID, fastjson.MustParse(defaultConfig))
-		SaveJSON(nil, nil, parsed, "")
+
+	if current.Sub(entryTime).Round(1*time.Second).Seconds() > 2 {
+		return nil, nil, err
 	}
-	guild := parsed.Get("Guilds", guildID)
-	return parsed, guild
+
+	if len(auditLog.Changes) == 0 {
+		return auditLog, []interface{}{}, nil
+	}
+
+	return auditLog, auditLog.Changes[0].NewValue, nil
+}
+
+func FindInSlice(slice []string, item string) bool {
+	for _, i := range slice {
+		if i == item {
+			return true
+		}
+	}
+	return false
 }
 
 func GetGuildOwner(s *discordgo.Session, guildID string) string {
-	guild, err := s.Guild(guildID)
+	guild, err := s.State.Guild(guildID)
 	if err != nil {
-		fmt.Printf("Error getting guild: %s\n", err)
 		return ""
 	}
 	return guild.OwnerID
 }
 
-func InArray(guildID string, arrayStr string, data *fastjson.Value, target string) (bool, int) {
-	var array []*fastjson.Value
-	switch len(arrayStr) {
-	case 0:
-		array = data.GetArray("Guilds")
-	default:
-		array = data.GetArray("Guilds", guildID, arrayStr)
+func HasPerms(s *discordgo.Session, guildID, userID string, permissions ...int) bool {
+	if GetGuildOwner(s, guildID) == userID {
+		return true
 	}
-	for index, whitelistedUser := range array {
-		if string(whitelistedUser.GetStringBytes()) == target {
-			return true, index
+
+	guild, err := s.State.Guild(guildID)
+	if err != nil || len(guild.Channels) == 0 {
+		return false
+	}
+
+	perms, err := s.UserChannelPermissions(userID, guild.Channels[0].ID)
+	if err != nil {
+		return false
+	}
+
+	for _, perm := range permissions {
+		if perms&perm != perm {
+			return false
 		}
 	}
-	return false, 0
+
+	return true
 }
 
-func ReadFile(fileName string) string {
-	file, err := os.Open(fileName)
+func HighestRole(s *discordgo.Session, guildID string, member *discordgo.Member) *discordgo.Role {
+	guild, err := s.State.Guild(guildID)
 	if err != nil {
-		fmt.Printf("Failed to open that file: %s", err.Error())
-		return ""
+		return nil
 	}
-	defer file.Close()
 
-	data, err := ioutil.ReadAll(file)
-	if err != nil {
-		fmt.Printf("I couldn't read the data: %s | Please reopen the program", err.Error())
-		return ""
-	}
-	return string(data)
-}
-
-func SaveJSON(s *discordgo.Session, message *discordgo.Message, parsedData *fastjson.Value, sendMessage string) {
-	if s != nil {
-		s.ChannelMessageSend(message.ChannelID, sendMessage)
-	}
-	Writefile("config.json", string(parsedData.MarshalTo(nil)))
-}
-
-func SendMessage(s *discordgo.Session, message, userID string) {
-	if len(userID) != 0 {
-		channel, err := s.UserChannelCreate(userID)
-		if err != nil {
-			fmt.Printf("Couldn't make a channel on that UserID: %s\n", err.Error())
-			return
+	var highest *discordgo.Role
+	for _, roleID := range member.Roles {
+		for _, role := range guild.Roles {
+			if roleID != role.ID {
+				continue
+			}
+			if highest == nil || IsAbove(role, highest) {
+				highest = role
+			}
+			break
 		}
-		s.ChannelMessageSend(channel.ID, message)
 	}
-	fmt.Printf("[GoGuardian]: %s\n", message)
+	if highest == nil {
+		defaultRole, _ := s.State.Role(guildID, guildID)
+		return defaultRole
+	}
+	return highest
 }
 
-func Writefile(filename string, data string) {
-	file, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
-	defer file.Close()
-	_, err = file.WriteAt([]byte(data), 0)
+func IsAbove(r, r2 *discordgo.Role) bool {
+
+	switch {
+	case r.Position != r2.Position:
+		return r.Position > r2.Position
+	case r.ID == r2.ID:
+		return false
+	}
+
+	return r.Position < r2.Position
+}
+
+func LogChannel(s *discordgo.Session, guildID, postData string) {
+	data, err := database.Database.FindData(guildID)
 	if err != nil {
-		fmt.Printf("Couldn't open/write to the file: %s", err)
+		return
 	}
+
+	if data["log-channel"] == "nil" {
+		return
+	}
+
+	s.ChannelMessageSend(data["log-channel"].(string), postData)
 }
 
-var (
-	defaultConfig = `{"WhitelistedIDs": [],"Config": {"Threshold":2,"Seconds":2,"BanProtection":true,"KickProtection":true,"HijackProtection":true,"AntiBotProtection":true,"RoleSpamProtection":true,"RoleNukeProtection":true,"RoleUpdateProtection":true,"ChannelSpamProtection":true,"ChannelNukeProtection":true,"MemberRoleUpdateProtection":true,"WebhookProtection":true}}`
-	parser        fastjson.Parser
-)
+func MakeRequest(url string) (resBody []byte, err error) {
+	// only really for simple GET requests
+	var res *http.Response
+
+	res, err = http.Get(url)
+	if err != nil {
+		return
+	}
+
+	resBody, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+
+	return
+}
+
+func ReadAudit(s *discordgo.Session, guildID, reason string, auditType int) {
+	if !HasPerms(s, guildID, s.State.User.ID, discordgo.PermissionViewAuditLogs) {
+		return
+	}
+
+	var (
+		audits, err  = s.GuildAuditLog(guildID, "", "", auditType, 25)
+		auditEntry   *discordgo.AuditLogEntry
+		selfMember   *discordgo.Member
+		targetMember *discordgo.Member
+	)
+
+	if err != nil || len(audits.AuditLogEntries) == 0 {
+		return
+	}
+
+	auditEntry = audits.AuditLogEntries[0]
+
+	if whitelisted := database.Database.IsWhitelisted(guildID, auditEntry.UserID); whitelisted {
+		return
+	}
+
+	current := time.Now()
+	entryTime, err := discordgo.SnowflakeTimestamp(auditEntry.ID)
+	if err != nil {
+		return
+	}
+
+	if current.Sub(entryTime).Round(1*time.Second).Seconds() > 2 {
+		return
+	}
+
+	selfMember, err = s.GuildMember(guildID, s.State.User.ID)
+	if err != nil {
+		return
+	}
+
+	targetMember, err = s.GuildMember(guildID, auditEntry.UserID)
+	if err != nil {
+		return
+	}
+
+	targetHighest := HighestRole(s, guildID, targetMember)
+	selfHighest := HighestRole(s, guildID, selfMember)
+
+	if targetHighest == nil || selfHighest == nil {
+		return
+	}
+
+	if !IsAbove(selfHighest, targetHighest) || !HasPerms(s, guildID, auditEntry.UserID, discordgo.PermissionBanMembers) {
+		return
+	}
+
+	err = s.GuildBanCreateWithReason(guildID, auditEntry.UserID, fmt.Sprintf("%s | %s", s.State.User.Username, reason), 0)
+	if err != nil {
+		return
+	}
+
+	LogChannel(s, guildID, fmt.Sprintf("<@%s> %s", auditEntry.UserID, reason))
+}
+
+func RemoveFromSlice(slice []string, item string) []string {
+	returnItems := []string{}
+	for _, i := range slice {
+		if i == item {
+			continue
+		}
+		returnItems = append(returnItems, i)
+	}
+	return returnItems
+}
